@@ -1,0 +1,624 @@
+﻿$(document).ready(function() {
+    $(".state,.city").select2({
+        minimumResultsForSearch: 10
+    });
+
+    $('.state').change(function() {
+        var selectedStateId = $(this).val();
+        var associatedCityId = $(this).data('city');
+
+        $.ajax({
+            url: '/api/city',
+            type: 'GET',
+            data: { stateId: selectedStateId },
+            success: function(data) {
+                $('#' + associatedCityId).empty();
+                $.each(data, function(key, value) {
+                    $('#' + associatedCityId).append('<option value="' + value.id + '">' + value.name + '</option>');
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error al obtener ciudades: ' + error);
+            }
+        });
+    });
+});
+
+// Store reCAPTCHA widget IDs for dynamic access
+var recaptchaWidgets = {};
+
+var CaptchaCallback = function() {
+    var siteKey = $("#recaptchaSiteKey").data("value");
+    var auto = $("#isAuto").val();
+
+    if (document.getElementById('recaptchaField1')) {
+        try {
+            recaptchaWidgets['recaptchaField1'] = grecaptcha.render('recaptchaField1', {'sitekey' : siteKey});
+            console.log('recaptchaField1 rendered with widget ID:', recaptchaWidgets['recaptchaField1']);
+        } catch (e) {
+            console.log('recaptchaField1 already rendered');
+        }
+    }
+    if (document.getElementById('recaptchaField2')) {
+        try {
+            recaptchaWidgets['recaptchaField2'] = grecaptcha.render('recaptchaField2', {'sitekey' : siteKey});
+            console.log('recaptchaField2 rendered with widget ID:', recaptchaWidgets['recaptchaField2']);
+        } catch (e) {
+            console.log('recaptchaField2 already rendered');
+        }
+    }
+    if (document.getElementById('recaptchaField3')) {
+        try {
+            recaptchaWidgets['recaptchaField3'] = grecaptcha.render('recaptchaField3', {'sitekey' : siteKey});
+            console.log('recaptchaField3 rendered with widget ID:', recaptchaWidgets['recaptchaField3']);
+        } catch (e) {
+            console.log('recaptchaField3 already rendered');
+        }
+    }
+    if (auto !== undefined && document.getElementById('recaptchaField4')) {
+        try {
+            recaptchaWidgets['recaptchaField4'] = grecaptcha.render('recaptchaField4', {'sitekey' : siteKey});
+            console.log('recaptchaField4 rendered with widget ID:', recaptchaWidgets['recaptchaField4']);
+        } catch (e) {
+            console.log('recaptchaField4 already rendered');
+        }
+    }
+};
+
+// Helper function to get reCAPTCHA response dynamically
+function getReCaptchaResponse(preferredClientId, fallbackFieldId) {
+    console.log('Getting reCAPTCHA response - preferred client ID:', preferredClientId, 'fallback field:', fallbackFieldId);
+    
+    // First try the preferred client ID if it exists
+    if (preferredClientId !== undefined && typeof grecaptcha !== 'undefined') {
+        try {
+            var response = grecaptcha.getResponse(preferredClientId);
+            if (response) {
+                console.log('Got response from preferred client ID', preferredClientId);
+                return response;
+            }
+        } catch (e) {
+            console.log('Preferred client ID', preferredClientId, 'not available:', e.message);
+        }
+    }
+    
+    // Try to get response using the stored widget ID for the fallback field
+    if (fallbackFieldId && recaptchaWidgets[fallbackFieldId] !== undefined) {
+        try {
+            var response = grecaptcha.getResponse(recaptchaWidgets[fallbackFieldId]);
+            if (response) {
+                console.log('Got response from fallback field', fallbackFieldId, 'with widget ID', recaptchaWidgets[fallbackFieldId]);
+                return response;
+            }
+        } catch (e) {
+            console.log('Fallback field', fallbackFieldId, 'not available:', e.message);
+        }
+    }
+    
+    // Last resort: try all possible client IDs (0-10 should be enough)
+    if (typeof grecaptcha !== 'undefined') {
+        for (var i = 0; i <= 10; i++) {
+            try {
+                var response = grecaptcha.getResponse(i);
+                if (response) {
+                    console.log('Got response from client ID', i, '(auto-detected)');
+                    return response;
+                }
+            } catch (e) {
+                // Continue to next client ID
+            }
+        }
+    }
+    
+    console.log('No reCAPTCHA response found from any available instance');
+    return null;
+}
+
+// Debug function to log all available reCAPTCHA instances
+function debugReCaptchaInstances() {
+    console.log('=== reCAPTCHA Debug Info ===');
+    console.log('Stored widget IDs:', recaptchaWidgets);
+    
+    if (typeof grecaptcha !== 'undefined') {
+        console.log('grecaptcha is available');
+        for (var i = 0; i <= 10; i++) {
+            try {
+                var response = grecaptcha.getResponse(i);
+                console.log('Client ID', i, '- Response length:', response ? response.length : 'empty');
+            } catch (e) {
+                console.log('Client ID', i, '- Not available');
+            }
+        }
+    } else {
+        console.log('grecaptcha is not available');
+    }
+    
+    // Check which reCAPTCHA fields exist in the DOM
+    ['recaptchaField1', 'recaptchaField2', 'recaptchaField3', 'recaptchaField4'].forEach(function(fieldId) {
+        var element = document.getElementById(fieldId);
+        console.log(fieldId + ':', element ? 'exists in DOM' : 'not found in DOM');
+    });
+    console.log('=== End reCAPTCHA Debug ===');
+}
+
+$(document).ready(function() {
+    $("#aserautomotriz").validate({
+    ignore:'',
+    rules: {
+        name1: "required",
+        email1: {
+            required: true,
+            email: true
+        },
+        phone1: {
+            required: true,
+            maxlength: 10
+        },
+        state1: "required",
+        city1: "required"
+    },
+    messages: {
+        name1: "El campo es obligatorio",
+        email1: {
+            required: "El campo es obligatorio",
+            email: "El correo electrónico no es válido"
+        },
+        phone1: {
+            required: "El campo es obligatorio",
+            maxlength: "El teléfono no debe tener más de 10 caracteres"
+        },
+        state1: "El campo es obligatorio",
+        city1: "El campo es obligatorio"
+    },
+    submitHandler: function (form, event) {
+        event.preventDefault();
+        
+        var name = $("#name1").val();
+        var email = $("#email1").val();
+        var phone = $("#phone1").val();
+        var state = $("#state1 option:selected").text();
+        var city = $("#city1 option:selected").text();
+        let pathname = window.location.pathname;
+        
+        if (!pathname.startsWith('/')) {
+            pathname = '/' + pathname;
+        }
+        
+        var recaptchaResponse = getReCaptchaResponse(0, 'recaptchaField1');
+        if (!recaptchaResponse) {
+            console.log('Form 1: No reCAPTCHA response found');
+            debugReCaptchaInstances();
+            $("#errorRecaptcha1").show();
+            document.getElementById('errorRecaptcha1').innerText = "Es necesario resuelva el reCAPTCHA antes de enviar el formulario.";
+            return;
+        }
+        $("#errorRecaptcha1").hide();
+
+        var formData = {
+            Name: name,
+            Phone: phone,
+            Email: email,
+            RecaptchaResponse : recaptchaResponse,
+            State: state,
+            City: city,
+            Url: pathname
+        }
+        let Formbtn = form.querySelector("button");
+        Formbtn.innerHTML = `<div class="jumping-dots-loader"> <span></span> <span></span> <span></span> </div><div class="moving-gradient"></div>`;
+
+        // Obtener token dinámico antes de enviar
+        $.get("/api/car/antiforgery-token", function(tokenData) {
+            $.ajax({
+                url: "/api/form/asesoria",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(formData),
+                headers: {
+                    "RequestVerificationToken": tokenData.token
+                },
+                success: function(data) {
+                    showAlert("El mensaje fue enviado con éxito");
+                    
+                    // Reset form and close modal ONLY on success
+                    form.reset();
+                    
+                    // Close modal with correct parameter
+                    if (typeof closeModal === 'function') {
+                        closeModal("formStep");
+                    } else {
+                        // Fallback modal close
+                        document.getElementById('formStep').style.display = 'none';
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error("Error en la solicitud AJAX:", textStatus, errorThrown);
+                    showAlert("Hubo un error al enviar el formulario. Por favor, inténtelo de nuevo.");
+                },
+                complete: function(jqXHR, textStatus) {
+                    // Only restore button text
+                    Formbtn.innerHTML = "Enviar";
+                }
+            });
+        }).fail(function() {
+            // Error al obtener token - restaurar botón
+            Formbtn.innerHTML = "Enviar";
+            console.error("Error al obtener token de verificación");
+            showAlert("Error al obtener token de verificación. Por favor, intenta nuevamente.");
+        });
+    },
+    errorClass: 'error',
+    errorPlacement: function (label, element) {
+        if (element.is(':radio')) {
+            element.parent().parent()[0].append(label[0])
+        } else if (element.is(":checkbox")) {
+            element.parent().parent()[0].append(label[0])
+        }
+        else {
+            if(element.is('select')){
+                element.parent()[0].append(label[0])
+            }
+            else
+                label.insertAfter(element);
+        }
+    }
+});
+
+$("#aserafinanciamiento").validate({
+    ignore:'',
+    rules: {
+        name2: "required",
+        email2: {
+            required: true,
+            email: true
+        },
+        phone2: {
+            required: true,
+            maxlength: 10
+        },
+        state2: "required",
+        city2: "required",
+        schedule2: { required:true },
+        carRange: { required:true },
+    },
+    messages: {
+        name2: "El campo es obligatorio",
+        email2: {
+            required: "El campo es obligatorio",
+            email: "El correo electrónico no es válido"
+        },
+        phone2: {
+            required: "El campo es obligatorio",
+            maxlength: "El teléfono no debe tener más de 10 caracteres"
+        },
+        state2: "El campo es obligatorio",
+        city2: "El campo es obligatorio",
+        schedule2: { required: "Selecciona al menos una opción"},
+        carRange: { required: "Selecciona al menos una opción"}
+    },
+    submitHandler: function (form, event) {
+        event.preventDefault();
+        
+        var name = $("#name2").val();
+        var email = $("#email2").val();
+        var phone = $("#phone2").val();
+        var state = $("#state2 option:selected").text();
+        var city = $("#city2 option:selected").text();
+
+        var recaptchaResponse = getReCaptchaResponse(1, 'recaptchaField2');
+        if (!recaptchaResponse) {
+            console.log('Form 2: No reCAPTCHA response found');
+            debugReCaptchaInstances();
+            $("#errorRecaptcha2").show();
+            document.getElementById('errorRecaptcha2').innerText = "Es necesario resuelva el reCAPTCHA antes de enviar el formulario.";
+            return;
+        }
+        $("#errorRecaptcha2").hide();
+
+        const scheduleMapping = {
+            "urgente": "Urgente",
+            "semana": "En las próximas dos semanas",
+            "mes": "En el próximo mes"
+        };
+
+        const financingMapping = {
+            "400": "$0 - $400 mil",
+            "700": "$400 - $700 mil",
+            "700+": "+$700 mil"
+        };
+
+        const schedule = $("input[name='schedule2']:checked").val();
+        const scheduleDescription = scheduleMapping[schedule];
+
+        const carRange = $("input[name='carRange']:checked").val();
+        const carRangeDescription = financingMapping[carRange];
+
+        var formData = {
+            Name: name,
+            Phone: phone,
+            Email: email,
+            RecaptchaResponse : recaptchaResponse,
+            State: state,
+            City: city,
+            Schedule: schedule,
+            ScheduleDescription: scheduleDescription,
+            Range: carRange,
+            RangeDescription: carRangeDescription
+        }
+
+        let Formbtn = form.querySelector("button");
+        Formbtn.innerHTML = `<div class="jumping-dots-loader"> <span></span> <span></span> <span></span> </div><div class="moving-gradient"></div>`;
+
+        // Obtener token dinámico antes de enviar
+        $.get("/api/car/antiforgery-token", function(tokenData) {
+            $.ajax({
+                url: "/api/form/creditoautomotriz",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(formData),
+                headers: {
+                    "RequestVerificationToken": tokenData.token
+                },
+                success: function(data) {
+                    showAlert("El mensaje fue enviado con éxito");
+                    
+                    // Reset form and close modal ONLY on success
+                    form.reset();
+                    
+                    // Reset selects without triggering change events that cause API calls
+                    $('.state').val('').trigger('change.select2');
+                    $('.city').val('').trigger('change.select2');
+                    
+                    // Close modal with correct parameter
+                    if (typeof closeModal === 'function') {
+                        closeModal("aserfinan");
+                    } else {
+                        // Fallback modal close
+                        document.getElementById('aserfinan').style.display = 'none';
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error("Error en la solicitud AJAX:", textStatus, errorThrown);
+                    showAlert("Hubo un error al enviar el formulario. Por favor, inténtelo de nuevo.");
+                },
+                complete: function(jqXHR, textStatus) {
+                    // Only restore button text
+                    Formbtn.innerHTML = "Enviar";
+                }
+            });
+        }).fail(function() {
+            // Error al obtener token - restaurar botón
+            Formbtn.innerHTML = "Enviar";
+            console.error("Error al obtener token de verificación");
+            showAlert("Error al obtener token de verificación. Por favor, intenta nuevamente.");
+        });
+    },
+    errorClass: 'error',
+    errorPlacement: function (label, element) {
+        if (element.is(':radio')) {
+            element.parent().parent()[0].append(label[0])
+        } else if (element.is(":checkbox")) {
+            element.parent().parent()[0].append(label[0])
+        }
+        else {
+            if(element.is('select')){
+                element.parent()[0].append(label[0])
+            }
+            else
+                label.insertAfter(element);
+        }
+    }
+});
+});
+
+// Initialize Media & Collab form validation
+function initMediaCollabValidation() {
+    console.log("Initializing Media & Collab form validation");
+    
+    // Remove any existing validation instance
+    $("#aseramediacollab").removeData('validator');
+    
+    // Add flag to prevent double submission
+    window.isSubmitting = false;
+    
+    $("#aseramediacollab").validate({
+        ignore:'',
+        rules: {
+            name3: "required",
+            email3: {
+                required: true,
+                email: true
+            },
+            phone3: {
+                required: true,
+                maxlength: 10
+            },
+            state3: "required",
+            city3: "required",
+            colaborarus: { required: true },
+        },
+        messages: {
+            name3: "El campo es obligatorio",
+            email3: {
+                required: "El campo es obligatorio",
+                email: "El correo electrónico no es válido"
+            },
+            phone3: {
+                required: "El campo es obligatorio",
+                maxlength: "El teléfono no debe tener más de 10 caracteres"
+            },
+            state3: "El campo es obligatorio",
+            city3: "El campo es obligatorio",
+            colaborarus: { required: "Selecciona al menos una opción"}
+        },
+        submitHandler: function (form, event) {
+        event.preventDefault();
+        console.log("Media & Collab form submitted via AJAX");
+        
+        // Prevent double submission
+        if (window.isSubmitting) {
+            console.log("Already submitting, ignoring duplicate request");
+            return;
+        }
+        window.isSubmitting = true;
+        
+        var name = $("#name3").val();
+        var email = $("#email3").val();
+        var phone = $("#phone3").val();
+        var state = $("#state3 option:selected").text();
+        var city = $("#city3 option:selected").text();
+        let pathname = window.location.pathname;
+
+        if (!pathname.startsWith('/')) {
+            pathname = '/' + pathname;
+        }
+
+        var recaptchaResponse = getReCaptchaResponse(2, 'recaptchaField3');
+        if (!recaptchaResponse) {
+            console.log('Form 3 (Modal): No reCAPTCHA response found');
+            debugReCaptchaInstances();
+            $("#errorRecaptcha3").show();
+            document.getElementById('errorRecaptcha3').innerText = "Es necesario resuelva el reCAPTCHA antes de enviar el formulario.";
+            return;
+        }
+        $("#errorRecaptcha3").hide();
+
+        const reasonMapping = {
+            "reseñas": "Reseñas de autos nuevos",
+            "venta": "Venta de productos relacionados a autos nuevos",
+            "integrar": "Integrar tu distribuidor a nuestras recomendaciones",
+            "publicidad": "Publicidad en nuestro sitio"
+        };
+
+        const reason = $("input[name='colaborarus']:checked").val();
+        const reasonDescription = reasonMapping[reason];
+
+        var formData = {
+            Name: name,
+            Phone: phone,
+            Email: email,
+            RecaptchaResponse : recaptchaResponse,
+            State: state,
+            City: city,
+            Reason: reason,
+            ReasonDescription: reasonDescription,
+            Url: pathname
+        }
+
+        let Formbtn = form.querySelector("button");
+        Formbtn.innerHTML = `<div class="jumping-dots-loader"> <span></span> <span></span> <span></span> </div><div class="moving-gradient"></div>`;
+
+        // Obtener token dinámico antes de enviar
+        $.get("/api/car/antiforgery-token", function(tokenData) {
+            $.ajax({
+                url: "/api/form/mediaandcollab",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(formData),
+                headers: {
+                    "RequestVerificationToken": tokenData.token
+                },
+                success: function(data) {
+                    showAlert("El mensaje fue enviado con éxito");
+                    
+                    // Reset form and close modal ONLY on success
+                    form.reset();
+                    
+                    // Reset selects without triggering change events that cause API calls
+                    $('.state').val('').trigger('change.select2'); 
+                    $('.city').val('').trigger('change.select2');
+                    
+                    // Close modal with correct parameter
+                    if (typeof closeModal === 'function') {
+                        closeModal("mcollab");
+                    } else {
+                        // Fallback modal close
+                        document.getElementById('mcollab').style.display = 'none';
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error("Error en la solicitud AJAX:", textStatus, errorThrown);
+                    console.error("Response:", jqXHR.responseText);
+                    showAlert("Hubo un error al enviar el formulario. Por favor, inténtelo de nuevo.");
+                },
+                complete: function(jqXHR, textStatus) {
+                    // Only restore button text, don't reset form here
+                    Formbtn.innerHTML = "Enviar";
+                    // Reset submission flag
+                    window.isSubmitting = false;
+                }
+            });
+        }).fail(function() {
+            // Error al obtener token - restaurar botón
+            Formbtn.innerHTML = "Enviar";
+            window.isSubmitting = false;
+            console.error("Error al obtener token de verificación");
+            showAlert("Error al obtener token de verificación. Por favor, intenta nuevamente.");
+        });
+    },
+    errorClass: 'error',
+    errorPlacement: function (label, element) {
+        if (element.is(':radio')) {
+            element.parent().parent()[0].append(label[0])
+        } else if (element.is(":checkbox")) {
+            element.parent().parent()[0].append(label[0])
+        }
+        else {
+            if(element.is('select')){
+                element.parent()[0].append(label[0])
+            }
+            else
+                label.insertAfter(element);
+        }
+    }
+    });
+}
+
+// Initialize validation on document ready (for non-modal forms)
+$(document).ready(function() {
+    // Only initialize if the form is visible (not in a hidden modal)
+    if ($("#aseramediacollab").length > 0 && $("#aseramediacollab").is(":visible")) {
+        initMediaCollabValidation();
+    }
+});
+
+// Alternative approach using class change detection for modal opening
+$(document).on('click', '[onclick*="mcollab"]', function() {
+    setTimeout(function() {
+        if ($("#mcollab").hasClass('open') && $("#mcollab #aseramediacollab").length > 0) {
+            initMediaCollabValidation();
+            // Ensure reCAPTCHA is rendered for the modal
+            if (window.grecaptcha && window.grecaptcha.render) {
+                var siteKey = $("#recaptchaSiteKey").data("value");
+                if (document.getElementById('recaptchaField3') && siteKey) {
+                    // Reset the reCAPTCHA field before rendering
+                    document.getElementById('recaptchaField3').innerHTML = '';
+                    
+                    // Ensure the container is visible and has proper dimensions
+                    var recaptchaContainer = document.getElementById('recaptchaField3');
+                    recaptchaContainer.style.display = 'block';
+                    recaptchaContainer.style.visibility = 'visible';
+                    recaptchaContainer.style.height = 'auto';
+                    recaptchaContainer.style.minHeight = '78px';
+                    recaptchaContainer.style.overflow = 'visible';
+                    
+                    try {
+                        recaptchaWidgets['recaptchaField3'] = grecaptcha.render('recaptchaField3', {'sitekey': siteKey});
+                        console.log('Modal reCAPTCHA rendered with widget ID:', recaptchaWidgets['recaptchaField3']);
+                        
+                        // Additional check to ensure visibility after rendering
+                        setTimeout(function() {
+                            var iframe = recaptchaContainer.querySelector('iframe');
+                            if (iframe) {
+                                iframe.style.display = 'block';
+                                iframe.style.visibility = 'visible';
+                                console.log('Modal reCAPTCHA iframe visibility ensured');
+                            }
+                        }, 50);
+                    } catch (e) {
+                        console.log('reCAPTCHA already rendered or not ready yet:', e.message);
+                    }
+                }
+            }
+        }
+    }, 150);
+});

@@ -1,0 +1,156 @@
+function addFavorite(e) {
+    favorites.push(e), saveFavorites(), addLike(e), showAlert("Auto agregado a favoritos")
+}
+
+function removeFavorite(e, t = "") {
+    let a = favorites.indexOf(e);
+    favorites.splice(a, 1), saveFavorites(), removeLike(e), 1 == t && lookFavs(1), showAlert("Eliminado correctamente de favoritos")
+}
+
+function saveFavorites() {
+    localStorage.setItem("favorites", JSON.stringify(favorites)), countFavorites()
+}
+
+function setAllLikes() {
+    favorites = JSON.parse(localStorage.getItem("favorites")) || [], document.getElementById("ficha-tecnica") ? (document.querySelectorAll(".mincar-like").forEach((function (e) {
+        e.classList.remove("liked")
+    })), favorites = JSON.parse(localStorage.getItem("favorites")) || [], favorites.forEach((function (e) {
+        addLike(e)
+    }))) : (document.querySelectorAll(".mincar-like").forEach((function (e) {
+        Nfav = e.dataset.idVersion.split(","), banderaFav = !0, favorites.forEach((function (t) {
+            Nfav.forEach((function (a) {
+                t == a && (banderaFav && (m = showPopUp(e, "like"), banderaFav = !1, console.log(m)), addLike(t))
+            }))
+        }))
+    })), document.querySelectorAll(".PopUp").forEach((function (e) {
+        e.classList.add("hidden")
+    }))), countFavorites()
+}
+
+function setFavorite(e, t = "") {
+    let a = e.getAttribute("auto");
+    e.classList.contains("liked") ? removeFavorite(a, t) : addFavorite(a), null != e.closest(".submenus") && 0 == e.closest(".submenus").querySelectorAll(".liked").length && (null == document.getElementById("favoritos") && null == document.getElementById("favoritos") || lookFavs(0))
+}
+
+function addLike(e) {
+    let t = document.querySelector("[auto='" + e + "']");
+    null != t && (null == t.closest(".PopUp") && null == t.closest(".PopUp") || t.closest(".PopUp").previousElementSibling.classList.add("liked"), t && (t.classList.add("liked"), t.setAttribute("aria-label", "Agregar a favoritos")))
+}
+
+function removeLike(e) {
+    let t = document.querySelector("[auto='" + e + "']");
+    t.classList.remove("liked"), t.setAttribute("aria-label", "Agregar a favoritos")
+}
+
+function countFavorites() {
+    document.querySelector(".favorites-menu") && (document.querySelector(".favorites-menu").innerText = favorites.length)
+}
+
+function showPopUp(e, t) {
+    if ("like" == t) {
+        $(e).parent().find(".PopUpCommit").addClass("hidden");
+        if ($(e).parent().find(".PopUpLike").length === 0) {
+            let totales = $(e).attr("data-version");
+            let ids = $(e).attr("data-id-version");
+
+            // Validar que totales e ids no sean undefined
+            if (totales && ids) {
+                totales = totales.split(",");
+                ids = ids.split(",");
+
+                var a = $("<div />", {
+                        class: "PopUp PopUpLike"
+                    }).insertAfter($(e)),
+                    o = $("<ul />", {
+                        class: "submenus"
+                    }),
+                    i = $("<p />", {
+                        class: "text"
+                    }).text("Marca una versión para añadir a favoritos"),
+                    s = $("<button />", {
+                        class: "popup-close i-x",
+                        type: "button"
+                    });
+                a.append(s);
+                a.append(i);
+                a.append(o);
+
+                for (var n = 0; n < totales.length; n++) {
+                    $("<li />").append(
+                        $("<button>")
+                            .attr("class", "car-tag add-like")
+                            .attr("onClick", "setFavorite(this)")
+                            .attr("auto", ids[n])
+                            .append($("<i>").attr("class", "i-heart"))
+                            .append(totales[n])
+                    ).appendTo(o);
+                }
+            } else {
+                console.error("data-version or data-id-version is undefined for element", e);
+            }
+        } else {
+            $(e).parent().find(".PopUpLike").toggleClass("hidden");
+        }
+    } else {
+        $(e).parent().find(".PopUpLike").addClass("hidden");
+        if ($(e).parent().find(".PopUpCommit").length === 0) {
+            let totales = $(e).siblings().closest(".mincar-like").attr("data-version");
+            let ids = $(e).siblings().closest(".mincar-like").attr("data-version");
+
+            // Validar que totales e ids no sean undefined
+            if (totales && ids) {
+                totales = totales.split(",");
+                ids = ids.split(",");
+
+                var a = $("<div />", {
+                        class: "PopUp PopUpCommit"
+                    }).insertAfter($(e)),
+                    o = $("<ul />", {
+                        class: "submenus"
+                    }),
+                    i = $("<p />", {
+                        class: "text"
+                    }).text("Marca una versión para añadirlo al comparador"),
+                    s = $("<button />", {
+                        class: "popup-close i-x",
+                        type: "button"
+                    });
+                a.append(s);
+                a.append(i);
+                a.append(o);
+
+                for (var n = 0; n < totales.length; n++) {
+                    $("<li />").append(
+                        $("<button>")
+                            .attr("class", "car-tag car-commit add-like")
+                            .attr("onClick", "setFavorite(this)")
+                            .attr("auto", ids[n])
+                            .append($("<span>").attr("class", "checkq"))
+                            .append(totales[n])
+                    ).appendTo(o);
+                }
+            } else {
+                console.error("data-version or data-id-version is undefined for element", e);
+            }
+        } else {
+            $(e).parent().find(".PopUpCommit").toggleClass("hidden");
+        }
+    }
+}
+
+function GenerateClick() {
+    $(".add-like").click((function (e) {
+        addLike(this)
+    })), $(".popup-close").click((function (e) {
+        removePopUp(this)
+    }))
+}
+$(".add-like").click((function (e) {
+    addLike(this)
+})), $((function () {
+    $(document).on("click", ".popup-close", (function (e) {
+        removePopUp(this)
+    }))
+}));
+let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+setAllLikes(), window.addEventListener("storage", setAllLikes);
