@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>EliteCar Indonesia | Sewa Mobil Premium Cepat & Terpercaya</title>
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+    </style>
     <meta name="description" content="EliteCar Indonesia: layanan rental mobil premium. Armada terawat, proses cepat, harga transparan. Pesan online dengan mudah.">
     <link rel="canonical" href="https://example.com/">
     <meta property="og:type" content="website">
@@ -37,9 +42,9 @@
             </div>
             <nav class="site-nav" aria-label="Navigasi utama">
                 <ul class="nav-list">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#cars">Cars</a></li>
-                    <li><a href="#booking">Contact</a></li>
+                    <li><a href="#home" class="nav-link">Home</a></li>
+                    <li><a href="#cars" class="nav-link">Cars</a></li>
+                    <li><a href="#contact" class="nav-link">Contact</a></li>
                 </ul>
             </nav>
         </div>
@@ -134,9 +139,16 @@
         </aside>
     </main>
 
-    <footer class="app-footer">
+    <footer class="app-footer" id="contact">
         <div class="container">
             <p>© <span id="year"></span> Rental Mobil. Semua hak dilindungi.</p>
+            <div class="contact-info">
+                <p class="contact-text">
+                    <strong>Kontak Kami:</strong><br>
+                    WhatsApp: <a href="https://wa.me/6282328649895?text=Halo%20EliteCar%20Indonesia,%20saya%20ingin%20info%20sewa%20mobil." target="_blank" rel="noopener" class="wa-link">+62-823-2864-9895</a><br>
+                    Email: info@elitecar.id
+                </p>
+            </div>
         </div>
     </footer>
 

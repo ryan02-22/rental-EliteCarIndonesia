@@ -30,6 +30,9 @@
 }
 
 * { box-sizing: border-box; }
+html { 
+  scroll-behavior: smooth; 
+}
 html, body { height: 100%; }
 body {
   margin: 0;
@@ -77,10 +80,28 @@ body {
 .nav-list { display: flex; gap: 20px; list-style: none; margin: 0; padding: 0; }
 .nav-list a {
   color: rgba(255,255,255,0.85); text-decoration: none; font-weight: 500; font-size: 14px;
-  transition: color .2s ease;
+  transition: color .2s ease, transform .15s ease;
+  display: inline-block;
+  position: relative;
+  padding: 4px 8px;
+  border-radius: 4px;
 }
-.nav-list a:hover { color: #fff; }
-.nav-list a:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 4px; padding: 2px 4px; }
+.nav-list a:hover { 
+  color: #fff; 
+  transform: translateY(-1px);
+}
+.nav-list a:active {
+  transform: translateY(0px) scale(0.98);
+}
+.nav-list a.clicked {
+  animation: navClickAnimation 0.3s ease;
+}
+.nav-list a:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+@keyframes navClickAnimation {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
 
 .filters { display: flex; gap: 8px; padding: 12px 0; }
 .filter-btn {
@@ -233,6 +254,9 @@ input:invalid:not(:placeholder-shown) { border-color: var(--danger); }
 .hero .primary-btn:hover { background: linear-gradient(180deg, var(--brand-500), var(--brand-600)); }
 
 .app-footer { border-top: 1px solid rgba(255,255,255,0.08); padding: 22px 0; color: rgba(255,255,255,0.72); background: var(--bg-dark); }
+.app-footer .contact-info { margin-top: 16px; }
+.app-footer .contact-text { margin: 8px 0; color: rgba(255,255,255,0.85); }
+.app-footer .contact-text .wa-link { color: #cfe8ff; }
 
 /* Contact help & WhatsApp */
 .contact-help { display: flex; justify-content: flex-start; }

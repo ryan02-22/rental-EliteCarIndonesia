@@ -422,6 +422,68 @@ function initSliders() {
 }
 
 // ============================================================================
+// Navigation Functions
+// ============================================================================
+
+/**
+ * Setup smooth scroll navigation dengan animasi klik
+ */
+function setupNavigation() {
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetId = link.getAttribute('href');
+      
+      // Animasi klik
+      link.classList.add('clicked');
+      setTimeout(() => {
+        link.classList.remove('clicked');
+      }, 300);
+
+      // Smooth scroll ke target dengan offset untuk sticky header
+      const targetElement = document.querySelector(targetId);
+      if (targetElement) {
+        // Hitung tinggi header secara dinamis
+        const header = document.querySelector('.app-header');
+        const headerHeight = header ? header.offsetHeight : 100;
+        
+        // Hitung posisi target dengan offset
+        const elementPosition = targetElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerHeight - 10; // 10px extra spacing
+        
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+
+        // Update URL hash tanpa trigger scroll
+        history.pushState(null, null, targetId);
+      }
+    });
+  });
+
+  // Handle hash pada URL saat page load (jika user refresh dengan hash)
+  if (window.location.hash) {
+    setTimeout(() => {
+      const hash = window.location.hash;
+      const targetElement = document.querySelector(hash);
+      if (targetElement) {
+        const header = document.querySelector('.app-header');
+        const headerHeight = header ? header.offsetHeight : 100;
+        const elementPosition = targetElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerHeight - 10;
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }, 100);
+  }
+}
+
+// ============================================================================
 // Initialization
 // ============================================================================
 
@@ -435,6 +497,7 @@ async function init() {
   renderCars(cars);
   setupFilters();
   setupBookingForm();
+  setupNavigation();
   applyFilter('all');
   updatePricing();
 }
