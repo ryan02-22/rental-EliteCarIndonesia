@@ -3,6 +3,14 @@
 // EliteCar Indonesia - Rental Mobil Application (PHP Version)
 // ============================================================================
 
+require_once 'config.php';
+
+// Optional: Uncomment line below to require login for accessing this page
+// requireLogin();
+
+// Get current user info if logged in
+$current_user = isLoggedIn() ? getCurrentUser() : null;
+
 // Include API untuk mendapatkan data mobil
 function getCarsData() {
     $cars = [
@@ -144,6 +152,13 @@ $jsonLdProducts = json_encode($cars);
                     <li><a href="#home" class="nav-link">Home</a></li>
                     <li><a href="#cars" class="nav-link">Cars</a></li>
                     <li><a href="#contact" class="nav-link">Contact</a></li>
+                    <?php if ($current_user): ?>
+                        <li><a href="#" class="nav-link" style="color: #6366f1;">👤 <?php echo htmlspecialchars($current_user['username']); ?></a></li>
+                        <li><a href="logout.php" class="nav-link" style="color: #ef4444;">Logout</a></li>
+                    <?php else: ?>
+                        <li><a href="login.php" class="nav-link">Login</a></li>
+                        <li><a href="register.php" class="nav-link" style="color: #6366f1;">Register</a></li>
+                    <?php endif; ?>
                 </ul>
             </nav>
         </div>
