@@ -1,5 +1,47 @@
 # EliteCar Indonesia - Rental Mobil Website
 
+Website rental mobil premium (HTML, CSS, vanilla JS) — telah dimodernisasi untuk dijalankan dengan PHP sebagai local backend ringan.
+## 🚀 Cara Menjalankan (direkomendasikan)
+
+1. Jalankan PHP development server dari folder proyek:
+```powershell
+cd "c:\All_Project_Kuliah\SEMESTER-3\UTSSMT3"
+php -S localhost:8000
+2. Buka aplikasi di browser: `http://localhost:8000/index.php`
+
+Catatan: Sebelumnya proyek dapat dibuka langsung dari `index.html`, namun sekarang `index.php` adalah entry utama yang mengintegrasikan API lokal.
+## 🔧 Perubahan penting
+
+- `index.php` — versi aplikasi yang terintegrasi dengan API PHP dan menggunakan data server-side.
+- `api/cars.php` — endpoint GET untuk daftar mobil (JSON).
+- `api/bookings.php` — endpoint POST/GET untuk menyimpan dan mengambil booking (disimpan di `/data/bookings.json`).
+- `consolidate-images.php` — script untuk mengkonsolidasikan dan membuat placeholder gambar ke folder `/images`.
+- `images/` — folder baru berisi gambar mobil (format .jpg/.webp) yang sudah distandarisasi.
+## 📦 API (lokal)
+
+- GET `/api/cars.php` — ambil daftar mobil (JSON). Contoh: `http://localhost:8000/api/cars.php`
+- GET `/api/bookings.php` — ambil semua booking
+- POST `/api/bookings.php` — buat booking baru (kirim JSON dengan `carId`, `email`, `startDate`, `endDate`, `totalPrice`)
+Contoh POST dengan `curl`:
+
+```bash
+curl -X POST "http://localhost:8000/api/bookings.php" \
+## 🖼️ Gambar
+
+Semua gambar mobil sudah dikonsolidasikan ke folder `images/` dan menggunakan `aspect-ratio: 1/1` serta `object-fit: cover` agar tampil penuh dan tidak gepeng.
+Jika Anda perlu menambah atau mengganti gambar, letakkan file baru di `images/` dan perbarui properti `image` pada `api/cars.php` atau di `index.php` data yang digunakan.
+
+## ✅ Testing & pengecekan cepat
+- Pastikan PHP terpasang: jalankan `php -v`.
+- Mulai server: `php -S localhost:8000`.
+- Buka: `http://localhost:8000/index.php` untuk melihat UI.
+- Pastikan `data/bookings.json` dapat ditulis oleh proses PHP (folder `data/` dibuat otomatis oleh API).
+- File asli `index.html` masih ada untuk referensi tata letak awal, namun `index.php` adalah versi yang diperbarui.
+- Jika Anda ingin kembali menjalankan tanpa PHP, buka `index.html` langsung — beberapa fitur API (booking) tidak akan bekerja tanpa server.
+
+Jika ingin saya bantu men-commit perubahan, menambahkan README lebih rinci, atau mengintegrasikan sistem templating sederhana, beri tahu saya.
+# EliteCar Indonesia - Rental Mobil Website
+
 Website rental mobil premium dengan tema profesional hitam-biru-putih. Dibangun dengan HTML5 semantic, CSS3 modern, dan vanilla JavaScript.
 
 ## 🚀 Cara Menjalankan

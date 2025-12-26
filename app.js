@@ -4,23 +4,23 @@
 
 // API Configuration
 const API_BASE_URL = '/api';
-const CARS_ENDPOINT = `${API_BASE_URL}/cars`;
-const BOOKINGS_ENDPOINT = `${API_BASE_URL}/bookings`;
+const CARS_ENDPOINT = `${API_BASE_URL}/cars.php`;
+const BOOKINGS_ENDPOINT = `${API_BASE_URL}/bookings.php`;
 
 // Fallback data mobil (jika API tidak tersedia)
 const FALLBACK_CARS = [
-  { id: 'c1', name: 'Toyota Fortuner', type: 'SUV', pricePerDay: 850000, image: ['fortuner-1.jpg', 'fortuner-2.jpg', 'fortuner-3.jpg'] },
-  { id: 'c2', name: 'Honda CR-V', type: 'SUV', pricePerDay: 800000, image: ['crv-1.jpg', 'crv-2.jpg', 'crv-3.jpg'] },
-  { id: 'c3', name: 'Daihatsu Terios', type: 'SUV', pricePerDay: 650000, image: ['terios-1.jpg', 'terios-2.jpg', 'terios-3.jpg'] },
-  { id: 'c4', name: 'Hyundai Palisade', type: 'SUV', pricePerDay: 1200000, image: ['palisade-1.jpg', 'palisade-2.jpg', 'palisade-3.jpg'] },
-  { id: 'c5', name: 'Toyota Avanza', type: 'Van', pricePerDay: 550000, image: ['tyt-avanza-1.webp', 'tyt-avanza-2.webp', 'tyt-avanza-3.webp'] },
-  { id: 'c6', name: 'Mitsubishi Xpander', type: 'Van', pricePerDay: 600000, image: ['xpander-1.jpg', 'xpander-2.jpg', 'xpander-3.jpg'] },
-  { id: 'c7', name: 'Suzuki Ertiga', type: 'Van', pricePerDay: 520000, image: ['ertiga-1.jpg', 'ertiga-2.jpg', 'ertiga-3.jpg'] },
-  { id: 'c8', name: 'Kia Carnival', type: 'Van', pricePerDay: 900000, image: ['carnival-1.jpg', 'carnival-2.webp', 'carnival-3.jpg'] },
-  { id: 'c9', name: 'Honda City', type: 'Sedan', pricePerDay: 500000, image: ['city-1.jpg', 'city-2.jpg', 'city-3.jpg'] },
-  { id: 'c10', name: 'Honda Civic', type: 'Sedan', pricePerDay: 750000, image: ['civic-1.jpg', 'civic-2.jpg', 'civic-3.jpg'] },
-  { id: 'c11', name: 'Toyota Camry', type: 'Sedan', pricePerDay: 900000, image: ['camry-1.jpg', 'camry-2.webp', 'camry-3.webp'] },
-  { id: 'c12', name: 'Mazda 6', type: 'Sedan', pricePerDay: 950000, image: ['mazda-1.jpg', 'mazda-2.jpg', 'mazda-3.jpg'] }
+  { id: 'c1', name: 'Toyota Fortuner', type: 'SUV', pricePerDay: 850000, image: 'fortuner.jpg' },
+  { id: 'c2', name: 'Honda CR-V', type: 'SUV', pricePerDay: 800000, image: 'crv.jpg' },
+  { id: 'c3', name: 'Daihatsu Terios', type: 'SUV', pricePerDay: 650000, image: 'terios.jpg' },
+  { id: 'c4', name: 'Hyundai Palisade', type: 'SUV', pricePerDay: 1200000, image: 'palisade.jpg' },
+  { id: 'c5', name: 'Toyota Avanza', type: 'Van', pricePerDay: 550000, image: 'avanza.jpg' },
+  { id: 'c6', name: 'Mitsubishi Xpander', type: 'Van', pricePerDay: 600000, image: 'xpander.jpg' },
+  { id: 'c7', name: 'Suzuki Ertiga', type: 'Van', pricePerDay: 520000, image: 'ertiga.jpg' },
+  { id: 'c8', name: 'Kia Carnival', type: 'Van', pricePerDay: 900000, image: 'carnival.jpg' },
+  { id: 'c9', name: 'Honda City', type: 'Sedan', pricePerDay: 500000, image: 'city.jpg' },
+  { id: 'c10', name: 'Honda Civic', type: 'Sedan', pricePerDay: 750000, image: 'civic.jpg' },
+  { id: 'c11', name: 'Toyota Camry', type: 'Sedan', pricePerDay: 900000, image: 'camry.jpg' },
+  { id: 'c12', name: 'Mazda 6', type: 'Sedan', pricePerDay: 950000, image: 'mazda.jpg' }
 ];
 
 // State
@@ -46,6 +46,12 @@ const bookingForm = document.getElementById('bookingForm');
 const yearEl = document.getElementById('year');
 const formSuccessEl = document.getElementById('formSuccess');
 
+// Defensive: jika elemen penting tidak ada, catat dan hentikan inisialisasi lebih lanjut
+const _missingDOM = (!carGrid || !carSelect || !bookingForm || !pricePerDayEl || !startDateEl || !endDateEl);
+if (_missingDOM) {
+  console.warn('Beberapa elemen DOM penting tidak ditemukan. Beberapa fitur mungkin dinonaktifkan.');
+}
+
 // ============================================================================
 // API Functions
 // ============================================================================
@@ -59,7 +65,11 @@ async function fetchCars() {
     const response = await fetch(CARS_ENDPOINT);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
-    return Array.isArray(data) ? data : data.cars || [];
+    // API may return shape { data: [...] } or { cars: [...] } or an array
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data.data)) return data.data;
+    if (Array.isArray(data.cars)) return data.cars;
+    return [];
   } catch (error) {
     console.warn('API tidak tersedia, menggunakan data fallback:', error.message);
     return FALLBACK_CARS;
@@ -110,31 +120,14 @@ function renderCars(list) {
     article.setAttribute('data-price', car.pricePerDay);
     article.setAttribute('data-name', car.name);
 
-    const images = Array.isArray(car.image) ? car.image : [car.image];
-    const sliderControls = images.length > 1
-      ? `<button class="nav prev" aria-label="Sebelumnya">‹</button><button class="nav next" aria-label="Berikutnya">›</button>`
-      : '';
-
-    const slides = images.map((spec, i) => {
-      const activeCls = i === 0 ? ' active' : '';
-      const src = String(spec);
-      return `<img class="slide${activeCls}" src="${src}" alt="${car.name} - ${car.type} - gambar ${i+1}">`;
-    }).join('');
-
+    // single image layout (kept simple and consistent)
+    const imgSrc = Array.isArray(car.image) ? car.image[0] : car.image;
     article.innerHTML = `
-      <div class="card-media">
-        <div class="slider" data-car-id="${car.id}" data-index="0">
-          ${slides}
-          ${sliderControls}
-        </div>
-      </div>
+      <img src="images/${imgSrc}" alt="${car.name}" class="card-image" loading="lazy">
       <div class="card-body">
-        <div class="car-name">${car.name}</div>
-        <div class="car-meta">
-          <span class="chip">${car.type}</span>
-          <span class="price">${fmtIDR.format(car.pricePerDay)}/hari</span>
-        </div>
-        <button class="card-btn" data-car-id="${car.id}" aria-label="Pesan ${car.name}">Pesan</button>
+        <h3 class="car-name">${car.name}</h3>
+        <p class="car-meta"><span>${car.type}</span><span class="price">${fmtIDR.format(car.pricePerDay)}/hari</span></p>
+        <button class="card-button" data-car-id="${car.id}" aria-label="Pilih ${car.name}">Pilih Mobil</button>
       </div>
     `;
 
@@ -150,7 +143,7 @@ function renderCars(list) {
  * Attach event listener ke tombol "Pesan" di setiap card
  */
 function attachCardButtons() {
-  const cardButtons = document.querySelectorAll('.card-btn');
+  const cardButtons = document.querySelectorAll('.card-button');
   cardButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       const carId = btn.getAttribute('data-car-id');
@@ -491,15 +484,42 @@ function setupNavigation() {
  * Initialize aplikasi
  */
 async function init() {
-  yearEl.textContent = new Date().getFullYear();
+  try {
+    yearEl.textContent = new Date().getFullYear();
 
-  cars = await fetchCars();
-  renderCars(cars);
-  setupFilters();
-  setupBookingForm();
-  setupNavigation();
-  applyFilter('all');
-  updatePricing();
+    cars = await fetchCars();
+    // Pastikan tampil berdasarkan nama (ascending)
+    cars.sort((a, b) => {
+      if (!a || !b) return 0;
+      const na = String(a.name || '')
+      const nb = String(b.name || '')
+      return na.localeCompare(nb, 'id', { sensitivity: 'base' });
+    });
+
+    renderCars(cars);
+    setupFilters();
+    setupBookingForm();
+    setupNavigation();
+    applyFilter('all');
+    updatePricing();
+  } catch (err) {
+    console.error('Inisialisasi aplikasi gagal:', err);
+    // Tampilkan pesan ke UI jika memungkinkan
+    try {
+      const banner = document.createElement('div');
+      banner.style.background = '#fee2e2';
+      banner.style.color = '#7f1d1d';
+      banner.style.padding = '12px';
+      banner.style.border = '1px solid #fecaca';
+      banner.style.borderRadius = '8px';
+      banner.style.margin = '12px 0';
+      banner.textContent = 'Terjadi kesalahan saat memuat aplikasi. Buka konsol untuk detail.';
+      const main = document.querySelector('main') || document.body;
+      main.insertBefore(banner, main.firstChild);
+    } catch (e) {
+      // ignore UI errors
+    }
+  }
 }
 
 // Start aplikasi saat DOM ready
