@@ -2,20 +2,38 @@
 // ============================================================================
 // EliteCar Indonesia - Register Page
 // ============================================================================
+// File ini menangani proses registrasi user baru
+// Fitur: Validasi input, pengecekan duplikasi, hashing password, auto-login
 
 require_once 'config.php';
 
-// Redirect if already logged in
+// ============================================================================
+// REDIRECT JIKA SUDAH LOGIN
+// ============================================================================
+// Cek apakah user sudah login menggunakan fungsi isLoggedIn() dari config.php
+// Jika sudah login, redirect ke halaman utama (tidak perlu register lagi)
 if (isLoggedIn()) {
     header("Location: index.php");
     exit();
 }
 
-$error = '';
-$success = '';
+// ============================================================================
+// INISIALISASI VARIABEL PESAN
+// ============================================================================
+$error = '';      // Untuk menyimpan pesan error
+$success = '';    // Untuk menyimpan pesan sukses
 
-// Handle registration form submission
+// ============================================================================
+// PROSES FORM REGISTRASI
+// ============================================================================
+// Cek apakah form di-submit menggunakan metode POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    
+    // ========================================================================
+    // STEP 1: AMBIL DATA DARI FORM
+    // ========================================================================
+    // Menggunakan trim() untuk menghapus spasi di awal dan akhir
+    // Operator ?? '' memberikan nilai default string kosong jika field tidak ada
     $username = trim($_POST['username'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $full_name = trim($_POST['full_name'] ?? '');
@@ -23,62 +41,110 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
     
-    // Validation
+    // ========================================================================
+    // STEP 2: VALIDASI INPUT
+    // ========================================================================
+    // Validasi dilakukan secara bertahap dengan if-elseif
+    // Jika ada error, langsung set pesan error dan hentikan proses
+    
     if (empty($username) || empty($email) || empty($full_name) || empty($password)) {
+        // Cek apakah field wajib kosong
         $error = 'Semua field wajib diisi!';
+        
     } elseif (strlen($username) < 3) {
+        // Cek panjang username minimal 3 karakter
         $error = 'Username minimal 3 karakter!';
+        
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        // Validasi format email menggunakan fungsi PHP built-in
         $error = 'Format email tidak valid!';
+        
     } elseif (strlen($password) < 6) {
+        // Cek panjang password minimal 6 karakter
         $error = 'Password minimal 6 karakter!';
+        
     } elseif ($password !== $confirm_password) {
+        // Cek apakah password dan konfirmasi password sama
         $error = 'Password dan konfirmasi password tidak cocok!';
+        
     } else {
+        // ====================================================================
+        // STEP 3: VALIDASI BERHASIL, LANJUT KE DATABASE
+        // ====================================================================
         $conn = getDBConnection();
         
-        // Check if username already exists
+        // ====================================================================
+        // STEP 4: CEK DUPLIKASI USERNAME
+        // ====================================================================
+        // Gunakan prepared statement untuk keamanan (mencegah SQL injection)
         $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
-        $stmt->bind_param("s", $username);
+        $stmt->bind_param("s", $username);  // "s" = string
         $stmt->execute();
         $result = $stmt->get_result();
         
         if ($result->num_rows > 0) {
+            // Jika username sudah ada di database
             $error = 'Username sudah digunakan!';
+            
         } else {
-            // Check if email already exists
+            // ================================================================
+            // STEP 5: CEK DUPLIKASI EMAIL
+            // ================================================================
             $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
             $stmt->bind_param("s", $email);
             $stmt->execute();
             $result = $stmt->get_result();
             
             if ($result->num_rows > 0) {
+                // Jika email sudah terdaftar
                 $error = 'Email sudah terdaftar!';
+                
             } else {
-                // Hash password
+                // ============================================================
+                // STEP 6: HASH PASSWORD
+                // ============================================================
+                // PENTING: Jangan pernah simpan password plain text!
+                // password_hash() menggunakan algoritma bcrypt secara default
+                // Hash ini one-way (tidak bisa di-decrypt, hanya bisa di-verify)
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
                 
-                // Insert new user
+                // ============================================================
+                // STEP 7: INSERT USER BARU KE DATABASE
+                // ============================================================
                 $stmt = $conn->prepare("INSERT INTO users (username, email, password, full_name, phone) VALUES (?, ?, ?, ?, ?)");
                 $stmt->bind_param("sssss", $username, $email, $hashed_password, $full_name, $phone);
+                // "sssss" = 5 parameter bertipe string
                 
                 if ($stmt->execute()) {
+                    // Registrasi berhasil
                     $success = 'Registrasi berhasil! Silakan login.';
                     
-                    // Auto login after registration (optional)
+                    // ========================================================
+                    // STEP 8: AUTO-LOGIN SETELAH REGISTRASI
+                    // ========================================================
+                    // Fitur opsional: langsung login user setelah registrasi
+                    // insert_id mengembalikan ID dari row yang baru di-insert
                     $_SESSION['user_id'] = $stmt->insert_id;
                     $_SESSION['username'] = $username;
                     $_SESSION['email'] = $email;
                     $_SESSION['full_name'] = $full_name;
                     
-                    // Redirect to index after 2 seconds
+                    // ========================================================
+                    // STEP 9: REDIRECT KE HALAMAN UTAMA
+                    // ========================================================
+                    // Tunggu 2 detik agar user bisa melihat pesan sukses
                     header("refresh:2;url=index.php");
+                    
                 } else {
+                    // Jika ada error saat insert ke database
                     $error = 'Terjadi kesalahan, silakan coba lagi!';
                 }
             }
         }
         
+        // ====================================================================
+        // STEP 10: TUTUP KONEKSI DATABASE
+        // ====================================================================
         $stmt->close();
         $conn->close();
     }

@@ -1,0 +1,33 @@
+# Ignore database backups
+*.sql.backup
+backup.sql
+
+# Ignore Docker data
+mysql_data/
+
+# Ignore environment files
+.env.local
+.env.production
+
+# Ignore logs
+*.log
+logs/
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore temporary files
+tmp/
+temp/
+*.tmp
+
+# Ignore uploaded files (if any)
+uploads/
+*.uploaded

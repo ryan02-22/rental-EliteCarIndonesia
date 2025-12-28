@@ -1,61 +1,192 @@
 <?php
 // ============================================================================
-// EliteCar Indonesia - Login Page
+// 📚 HALAMAN LOGIN - EliteCar Indonesia
+// ============================================================================
+// File ini menangani proses login user
+// Flow: Form → Validasi → Query Database → Verify Password → Set Session → Redirect
 // ============================================================================
 
+// ============================================================================
+// STEP 1: LOAD CONFIGURATION
+// ============================================================================
 require_once 'config.php';
+// require_once = include file hanya 1x (prevent error jika dipanggil berulang)
+// Load config.php untuk akses database dan helper functions
 
-// Redirect if already logged in
+// ============================================================================
+// STEP 2: CEK JIKA SUDAH LOGIN
+// ============================================================================
+// Redirect user yang sudah login ke halaman utama
 if (isLoggedIn()) {
-    header("Location: index.php");
-    exit();
+    // isLoggedIn() = function dari config.php, cek $_SESSION['user_id']
+    header("Location: index.php");  // Redirect ke halaman utama
+    exit();  // Stop execution
 }
 
-$error = '';
-$success = '';
+// ============================================================================
+// STEP 3: INISIALISASI VARIABLES
+// ============================================================================
+$error = '';    // Variable untuk simpan pesan error
+$success = '';  // Variable untuk simpan pesan sukses
 
-// Handle login form submission
+// ============================================================================
+// STEP 4: HANDLE FORM SUBMISSION
+// ============================================================================
+/**
+ * PENJELASAN: $_SERVER['REQUEST_METHOD']
+ * - Berisi HTTP method yang dipakai (GET, POST, PUT, DELETE)
+ * - Form login menggunakan method="POST"
+ * - Code di dalam if hanya jalan saat form di-submit
+ */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    
+    // ========================================================================
+    // STEP 4.1: AMBIL DATA DARI FORM
+    // ========================================================================
+    /**
+     * $_POST = superglobal array berisi data dari form (method POST)
+     * trim() = hapus spasi di awal/akhir string
+     * ?? '' = null coalescing operator (jika null, pakai '')
+     */
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
     
+    // ========================================================================
+    // STEP 4.2: VALIDASI INPUT
+    // ========================================================================
+    /**
+     * empty() = cek apakah variable kosong
+     * || = OR operator (salah satu kosong = error)
+     */
     if (empty($username) || empty($password)) {
         $error = 'Username dan password harus diisi!';
+        // Set error message, akan ditampilkan di HTML
     } else {
-        $conn = getDBConnection();
+        // Input tidak kosong, lanjut proses login
         
-        // Get user by username or email
-        $stmt = $conn->prepare("SELECT id, username, email, password, full_name FROM users WHERE username = ? OR email = ?");
+        // ====================================================================
+        // STEP 4.3: BUAT KONEKSI DATABASE
+        // ====================================================================
+        $conn = getDBConnection();
+        // Panggil function dari config.php untuk koneksi ke MySQL
+        
+        // ====================================================================
+        // STEP 4.4: QUERY DATABASE - CARI USER
+        // ====================================================================
+        /**
+         * PREPARED STATEMENT untuk keamanan (SQL Injection Prevention)
+         * 
+         * ? = placeholder yang akan di-replace dengan nilai
+         * Kenapa pakai 2 placeholder? Karena cek username OR email
+         */
+        $stmt = $conn->prepare("SELECT id, username, email, password, full_name, role FROM users WHERE username = ? OR email = ?");
+        
+        /**
+         * BIND PARAMETER
+         * "ss" = 2 string parameters (s = string, i = integer, d = double)
+         * $username, $username = bind nilai ke 2 placeholder ?
+         * Nilai sama karena cari di kolom username OR email
+         */
         $stmt->bind_param("ss", $username, $username);
+        
+        // Execute query (jalankan SQL)
         $stmt->execute();
+        
+        // Ambil result set (hasil query)
         $result = $stmt->get_result();
         
+        // ====================================================================
+        // STEP 4.5: VALIDASI USER DITEMUKAN
+        // ====================================================================
+        /**
+         * num_rows = jumlah row yang ditemukan
+         * === 1 = strict comparison (harus persis 1, tidak boleh 0 atau 2+)
+         */
         if ($result->num_rows === 1) {
+            // User ditemukan!
+            
+            /**
+             * fetch_assoc() = convert hasil query ke associative array
+             * Format: ['id' => 1, 'username' => 'admin', ...]
+             */
             $user = $result->fetch_assoc();
             
-            // Verify password
+            // ================================================================
+            // STEP 4.6: VERIFY PASSWORD
+            // ================================================================
+            /**
+             * password_verify(plain_password, hashed_password)
+             * 
+             * Function PHP untuk compare password:
+             * - Parameter 1: Password dari form (plain text)
+             * - Parameter 2: Password dari database (hashed)
+             * - Return: true jika match, false jika tidak
+             * 
+             * Kenapa tidak compare string biasa?
+             * - Password di database di-hash dengan password_hash()
+             * - Hash berbeda setiap kali (karena salt random)
+             * - Harus pakai password_verify() untuk compare
+             */
             if (password_verify($password, $user['password'])) {
-                // Set session
+                // Password BENAR! Login berhasil
+                
+                // ============================================================
+                // STEP 4.7: SET SESSION (LOGIN SUCCESS)
+                // ============================================================
+                /**
+                 * $_SESSION = superglobal array untuk simpan data user
+                 * Data di $_SESSION tersimpan selama browser terbuka
+                 * Setiap user punya session berbeda
+                 */
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['full_name'] = $user['full_name'];
+                $_SESSION['user_role'] = $user['role'] ?? 'customer';  // Simpan role untuk RBAC
                 
-                // Redirect to index
+                // ============================================================
+                // STEP 4.8: REDIRECT KE HALAMAN UTAMA
+                // ============================================================
+                /**
+                 * header("Location: ...") = redirect user ke URL lain
+                 * Harus dipanggil SEBELUM ada output HTML
+                 * exit() = stop program (code setelah ini tidak jalan)
+                 */
                 header("Location: index.php");
                 exit();
+                
             } else {
+                // Password SALAH
                 $error = 'Username atau password salah!';
+                // Pesan error generik untuk keamanan
+                // Tidak spesifik "password salah" untuk cegah brute force
             }
         } else {
+            // User TIDAK DITEMUKAN
             $error = 'Username atau password salah!';
+            // Pesan sama dengan password salah (keamanan)
         }
         
-        $stmt->close();
-        $conn->close();
+        // ====================================================================
+        // STEP 4.9: CLEANUP - CLOSE CONNECTIONS
+        // ====================================================================
+        $stmt->close();  // Tutup prepared statement
+        $conn->close();  // Tutup koneksi database
+        // PENTING: Selalu close untuk free memory
     }
 }
+
+// ============================================================================
+// CATATAN PENTING AUTHENTICATION:
+// ============================================================================
+// 1. Selalu gunakan HTTPS di production (encrypt data transmission)
+// 2. Password di database HARUS di-hash (pakai password_hash())
+// 3. Jangan tampilkan error spesifik (username/password salah)
+// 4. Implement rate limiting untuk prevent brute force attack
+// 5. Session ID harus random dan expire setelah logout
+// ============================================================================
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>

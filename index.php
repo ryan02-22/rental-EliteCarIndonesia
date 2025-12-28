@@ -188,17 +188,17 @@ $jsonLdProducts = json_encode($cars);
 
         <aside class="booking" aria-labelledby="booking-title" id="booking">
             <h2 id="booking-title">Formulir Pemesanan</h2>
-            <form id="bookingForm" novalidate>
+            <form id="bookingForm" method="POST" action="booking_process.php">
                 <fieldset>
                     <legend>Data Penyewa</legend>
                     <div class="form-group">
                         <label for="renterName">Nama Penyewa</label>
-                        <input type="text" id="renterName" name="renterName" placeholder="Masukkan nama lengkap" required>
+                        <input type="text" id="renterName" name="renter_name" placeholder="Masukkan nama lengkap" required>
                         <small class="error" id="nameError" aria-live="polite"></small>
                     </div>
                     <div class="form-group">
                         <label for="renterEmail">Email</label>
-                        <input type="email" id="renterEmail" name="renterEmail" placeholder="nama@contoh.com" required>
+                        <input type="email" id="renterEmail" name="renter_email" placeholder="nama@contoh.com" required>
                     </div>
                 </fieldset>
 
@@ -206,7 +206,7 @@ $jsonLdProducts = json_encode($cars);
                     <legend>Detail Sewa</legend>
                     <div class="form-group">
                         <label for="carSelect">Pilihan Mobil</label>
-                        <select id="carSelect" name="carSelect" required aria-describedby="pricePerDayHelp">
+                        <select id="carSelect" name="car_id" required aria-describedby="pricePerDayHelp">
                             <option value="" disabled selected>Pilih mobil</option>
                         </select>
                         <small id="pricePerDayHelp" class="muted">Harga per hari akan tampil di bawah.</small>
@@ -217,11 +217,11 @@ $jsonLdProducts = json_encode($cars);
                     <div class="date-row">
                         <div class="form-group">
                             <label for="startDate">Tanggal Mulai Sewa</label>
-                            <input type="date" id="startDate" name="startDate" required>
+                            <input type="date" id="startDate" name="start_date" required>
                         </div>
                         <div class="form-group">
                             <label for="endDate">Tanggal Selesai Sewa</label>
-                            <input type="date" id="endDate" name="endDate" required>
+                            <input type="date" id="endDate" name="end_date" required>
                         </div>
                     </div>
                     <small class="error" id="dateError" aria-live="polite"></small>
