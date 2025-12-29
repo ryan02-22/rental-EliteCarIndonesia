@@ -203,24 +203,26 @@ $jsonLdProducts = json_encode($cars);
 <script>
   // existing logout listeners remain above
   // Reservation Form Confirmation
-  const bookingForm = document.getElementById('bookingForm');
-  const reserveModal = document.getElementById('reserve-modal');
+  document.addEventListener('DOMContentLoaded', function() {
+      const bookingForm = document.getElementById('bookingForm');
+      const reserveModal = document.getElementById('reserve-modal');
 
-  if (bookingForm) {
-    bookingForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      reserveModal.classList.remove('hidden');
-    });
-  }
+      if (bookingForm) {
+        bookingForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          reserveModal.classList.remove('hidden');
+        });
+      }
 
-  document.getElementById('confirm-reserve').addEventListener('click', function() {
-    // Programmatically submit the form (bypasses submit listener)
-    if (bookingForm) bookingForm.submit();
-    reserveModal.classList.add('hidden');
-  });
+      document.getElementById('confirm-reserve').addEventListener('click', function() {
+        // Programmatically submit the form (bypasses submit listener)
+        if (bookingForm) bookingForm.submit();
+        reserveModal.classList.add('hidden');
+      });
 
-  document.getElementById('cancel-reserve').addEventListener('click', function() {
-    reserveModal.classList.add('hidden');
+      document.getElementById('cancel-reserve').addEventListener('click', function() {
+        if(reserveModal) reserveModal.classList.add('hidden');
+      });
   });
 </script>
         </div>
