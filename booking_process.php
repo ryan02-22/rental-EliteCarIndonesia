@@ -155,7 +155,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' || $restored_from_session) {
                 // STEP 6: INSERT BOOKING KE DATABASE
                 // ============================================================
                 // Status default: 'pending' (menunggu konfirmasi admin)
-                $stmt = $conn->prepare("INSERT INTO bookings (user_id, car_id, renter_name, renter_email, start_date, end_date, total_days, total_price, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')");
+                // Payment Method default: 'transfer' (sementara, nanti tambah field di form)
+                $stmt = $conn->prepare("INSERT INTO bookings (user_id, car_id, renter_name, renter_email, start_date, end_date, total_days, total_price, status, payment_method) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'transfer')");
                 
                 // Bind parameters:
                 // i = integer (user_id, car_id)
@@ -163,6 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' || $restored_from_session) {
                 // i = integer (total_days)
                 // d = double/decimal (total_price)
                 $stmt->bind_param("iissssid", $user_id, $car_id, $renter_name, $renter_email, $start_date, $end_date, $total_days, $total_price);
+
                 
                 if ($stmt->execute()) {
                     // Booking berhasil disimpan
