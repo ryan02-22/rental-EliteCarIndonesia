@@ -759,31 +759,36 @@ img {
   justify-content: flex-start;
 }
 
-.wa-link {
+
+.wa-button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #cfe8ff;
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 999px;
   text-decoration: none;
   font-weight: 600;
   font-size: 13px;
-  position: relative;
-  user-select: none;
-  -webkit-tap-highlight-color: rgba(255, 255, 255, .15);
+  transition: background .2s ease, transform .1s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.wa-link:hover {
-  color: #ffffff;
+.wa-button:hover {
+  background: linear-gradient(135deg, #1EBE5B, #0F8A6E);
+  transform: translateY(-2px);
 }
 
-.wa-link:visited {
-  color: #cfe8ff;
+.wa-button:active {
+  transform: translateY(0px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-.wa-link:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 4px rgba(0, 123, 255, .25);
-  border-radius: 8px;
+.wa-button .wa-text {
+  font-size: 14px;
+  line-height: 1;
+}
 }
 
 .wa-link::after {
