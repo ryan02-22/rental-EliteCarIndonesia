@@ -361,16 +361,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </ul>
         </div>
 
-        <div style="background: #f3f4f6; padding: 14px; border-radius: 8px; margin-top: 16px; border: 1px solid #e5e7eb;">
-            <p style="font-size: 13px; color: #374151; text-align: center; margin: 0 0 10px 0; font-weight: 600;">
-                📝 Akun Demo (Admin)
-            </p>
-            <div style="background: white; padding: 10px; border-radius: 6px; font-family: monospace; font-size: 12px;">
-                <p style="margin: 4px 0; color: #1f2937;"><strong>Username:</strong> <code style="background: #fef3c7; padding: 2px 6px; border-radius: 4px; color: #92400e;">admin</code> / <code style="background: #fef3c7; padding: 2px 6px; border-radius: 4px; color: #92400e;">admin2</code> / <code style="background: #fef3c7; padding: 2px 6px; border-radius: 4px; color: #92400e;">admin3</code></p>
-                <p style="margin: 4px 0; color: #1f2937;"><strong>Password:</strong> <code style="background: #dbeafe; padding: 2px 6px; border-radius: 4px; color: #1e40af;">password</code></p>
-            </div>
-            <p style="font-size: 10px; color: #9ca3af; text-align: center; margin: 8px 0 0 0;">
-                ⚠️ Password: <strong>password</strong> (bukan password123)
+        <div style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); padding: 12px; border-radius: 8px; margin-top: 16px; border: 2px solid #4f46e5;">
+            <p style="font-size: 13px; color: #ffffff; text-align: center; margin: 0; font-weight: 600;">
+                💻 Karya TI.24.CA.1
             </p>
         </div>
     </div>
