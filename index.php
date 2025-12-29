@@ -176,9 +176,12 @@ $jsonLdProducts = json_encode($cars);
             <!-- Logout Confirmation Modal -->
 <div id="logout-modal" class="modal hidden">
   <div class="modal-content">
-    <p>Apakah Anda yakin ingin logout?</p>
-    <button id="confirm-logout" class="primary-btn">Ya</button>
-    <button id="cancel-logout" class="secondary-btn">Batal</button>
+    <span class="modal-icon">🚪</span>
+    <p>Apakah Anda yakin ingin logout dari akun Anda?</p>
+    <div class="modal-actions">
+        <button id="confirm-logout" class="confirm-btn">Ya, Logout</button>
+        <button id="cancel-logout" class="cancel-btn">Batal</button>
+    </div>
   </div>
 </div>
 <script>
@@ -197,9 +200,12 @@ $jsonLdProducts = json_encode($cars);
 <!-- Reservation Confirmation Modal -->
 <div id="reserve-modal" class="modal hidden">
   <div class="modal-content">
-    <p>Apakah Anda yakin ingin melakukan reservasi?</p>
-    <button id="confirm-reserve" class="primary-btn">Ya</button>
-    <button id="cancel-reserve" class="secondary-btn">Batal</button>
+    <span class="modal-icon">🚗</span>
+    <p>Apakah Anda yakin ingin melakukan reservasi mobil ini?</p>
+    <div class="modal-actions">
+        <button id="confirm-reserve" class="confirm-btn">Ya, Reservasi</button>
+        <button id="cancel-reserve" class="cancel-btn">Cek Lagi</button>
+    </div>
   </div>
 </div>
         </div>

@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     end_date DATE NOT NULL,
     total_days INT NOT NULL,
     total_price DECIMAL(10, 2) NOT NULL,
+    payment_method VARCHAR(50) DEFAULT 'transfer',
     status ENUM('pending', 'confirmed', 'completed', 'cancelled') DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
