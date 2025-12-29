@@ -8,9 +8,9 @@
 
 ---
 
-## 📋 Kriteria UAS (Terpenuhi Semua ✅)
+## 📋 Fitur(Terpenuhi Semua ✅)
 
-| No | Kriteria | Status |
+| No | Fitur | Status |
 |----|----------|--------|
 | 1 | Login ke halaman menu/dashboard | ✅ |
 | 2 | Logout ke halaman login | ✅ |
