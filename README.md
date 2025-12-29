@@ -8,79 +8,66 @@
 
 ---
 
-## ✨ Features
-
-### 💎 **Premium UI/UX**
-- **Glassmorphism Design**: Modal konfirmasi dan logout dengan efek blur latar belakang dan desain transparan modern.
-- **Smooth Animations**: Animasi mikro (bounce, scale, fade) untuk interaksi user yang lebih hidup.
-- **Responsive Layout**: Optimal untuk perangkat mobile, tablet, hingga desktop.
-- **Dynamic Sliders**: Navigasi gambar mobil yang interaktif untuk setiap katalog.
-
-### 🛡️ **Security & Backend**
-- **Role-Based Access Control**: Pemisahan hak akses antara Customer dan Admin.
-- **Robust Validation**: Penanganan `car_id` dan tanggal yang defensif (mencegah error input).
-- **Security Helpers**: Proteksi CSRF, XSS, SQL Injection (Prepared Statements), dan Rate Limiting.
-- **Session Security**: Validasi fingerprint dan timeout otomatis (30 menit).
-
-### 📊 **Admin Dashboard**
-- **Live Statistics**: Pantau total user, mobil, pemesanan, dan total pendapatan secara real-time.
-- **Booking Management**: Sistem update status (Pending, Confirmed, Completed, Cancelled).
-- **Car Management**: CRUD lengkap untuk katalog mobil dengan dukungan multiple images.
-- **Export Reports**: Ekspor data laporan ke format Excel/CSV.
+## ✨ Fitur Keren
+- **Desain Mewah (Glassmorphism)**: Tampilan dialog & modal yang transparan dan halus.
+- **Admin Panel Lengkap**: Dashboard statistik, kelola mobil, dan pantau booking.
+- **Keamanan Terjamin**: Lapis perlindungan dari SQL Injection, CSRF, dan XSS.
+- **Responsif**: Tetap cantik dibuka dari HP, Tablet, maupun Laptop.
 
 ---
 
-## 🚀 Quick Start (Docker)
+## 🚀 Cara Menjalankan Aplikasi
 
-Metode Docker adalah yang tercepat dan paling stabil.
+Pilih cara yang paling cocok buat kamu! Kami merekomendasikan **Metode Docker** karena jauh lebih simpel dan tidak ribet setting database.
 
-1.  **Jalankan Container**:
-    ```bash
-    docker-compose up -d
-    ```
-2.  **Akses Aplikasi**:
-    - **Homepage**: [http://localhost:8000](http://localhost:8000)
-    - **Login Admin**: [http://localhost:8000/login.php](http://localhost:8000/login.php)
-    - **PHPMyAdmin**: [http://localhost:8080](http://localhost:8080)
-
----
-
-## 🔐 Admin Credentials
-
-| Username | Password | Role |
-|----------|----------|------|
-| `admin`  | `password` | Super Admin |
+### 🐳 Metode 1: Pakai Docker (Paling Gampang!)
+1. **Buka Docker Desktop**: Pastikan Docker kamu sudah menyala (icon paus di pojok bawah sudah tidak berkedip).
+2. **Jalankan Command**: Buka terminal/CMD di folder project ini, lalu ketik:
+   ```bash
+   docker-compose up -d
+   ```
+3. **Tunggu Sebentar**: Docker akan menyiapkan server (PHP, MySQL, phpMyAdmin) secara otomatis.
+4. **Selesai!**: Buka browser dan ketik: [http://localhost:8000](http://localhost:8000)
 
 ---
 
-## 🛠️ Tech Stack
+### 🛠️ Metode 2: Pakai XAMPP (Tanpa Docker)
+Jika kamu lebih nyaman pakai XAMPP, ikuti langkah santai ini:
 
-- **Backend**: PHP 8.2 (Modular Architecture)
-- **Database**: MySQL 8.0
-- **Frontend**: Vanilla HTML5, CSS3 (Custom Glassmorphism), JavaScript (ES6+)
-- **Environment**: Docker & Docker Compose
-- **Security**: custom Security Helpers Library
-
----
-
-## 📝 Recent Updates (Changelog)
-
-- **v1.2.0**: **Premium UI Overhaul** - Implementasi full glassmorphism modals & interactive animations.
-- **v1.1.5**: **Database Sync Fix** - Penambahan kolom `payment_method` dan perbaikan integritas data `bookings`.
-- **v1.1.0**: **Logic Hardening** - Perbaikan bug `car_id` mismatch dan optimasi perbandingan tipe data di `app.js`.
-- **v1.0.0**: Initial release with core CRUD and Auth features.
+1. **Siapkan Folder**: Copy folder project ini ke dalam `C:\xampp\htdocs\`.
+2. **Nyalakan XAMPP**: Buka XAMPP Control Panel, lalu klik **Start** di **Apache** dan **MySQL**.
+3. **Import Database**:
+   - Buka [http://localhost/phpmyadmin](http://localhost/phpmyadmin).
+   - Buat database baru dengan nama `elitecar_db`.
+   - Pilih database tersebut, klik tab **Import**, lalu pilih file `database.sql` yang ada di folder project. Klik **Go**!
+4. **Sesuaikan Config**: Buka file `config.php`, ganti `DB_HOST` jadi `'localhost'` dan `DB_PASS` jadi `''` (kosongkan) jika kamu pakai settingan default XAMPP.
+5. **Cek Hasilnya**: Buka browser dan ketik: [http://localhost/UTSSMT3/index.php](http://localhost/UTSSMT3/index.php)
 
 ---
 
-## 📂 Project Structure
+## 🔐 Akun Login (Admin)
+Mau coba masuk ke panel admin? Pake akun ini ya:
+- **Username**: `admin`
+- **Password**: `password`
 
+---
+
+## 📝 Catatan Tambahan (Changelog)
+- **v1.2.0**: Upgrade total UI ke desain Glassmorphism yang modern.
+- **v1.1.5**: Perbaikan database (kolom `payment_method`) agar booking lancar jaya.
+- **v1.1.0**: Perbaikan bug `car_id` agar sistem lebih "pintar" baca data.
+
+---
+
+## 📂 Struktur Project
 ```text
-├── admin/               # Admin panel pages (dashboard, cars, bookings)
-├── api/                 # API Endpoints (cars, bookings)
-├── assets/              # Static assets (images, icons)
-├── config.php           # DB & Session configuration
-├── database.sql         # Database schema & sample data
-├── security_helper.php  # Security library (CSRF, XSS, Rate Limit)
-├── styles.css           # Global premium styling
-└── app.js               # Frontend application logic
+├── admin/               # Panel khusus admin (dashboard, mobil, booking)
+├── api/                 # Jantung data aplikasi
+├── database.sql         # File "resep" database
+├── security_helper.php  # Satpam pelindung aplikasi
+├── styles.css           # Baju premium aplikasi
+└── app.js               # Otak tampilan aplikasi
 ```
+
+---
+*Dibuat dengan ❤️ untuk pengalaman rental mobil yang lebih baik.*
