@@ -202,17 +202,25 @@ $jsonLdProducts = json_encode($cars);
 </div>
 <script>
   // existing logout listeners remain above
-  document.getElementById('reserve-link').addEventListener('click', function(e) {
-    e.preventDefault();
-    document.getElementById('reserve-modal').classList.remove('hidden');
-  });
+  // Reservation Form Confirmation
+  const bookingForm = document.getElementById('bookingForm');
+  const reserveModal = document.getElementById('reserve-modal');
+
+  if (bookingForm) {
+    bookingForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      reserveModal.classList.remove('hidden');
+    });
+  }
+
   document.getElementById('confirm-reserve').addEventListener('click', function() {
-    // navigate to booking section
-    window.location.hash = 'booking';
-    document.getElementById('reserve-modal').classList.add('hidden');
+    // Programmatically submit the form (bypasses submit listener)
+    if (bookingForm) bookingForm.submit();
+    reserveModal.classList.add('hidden');
   });
+
   document.getElementById('cancel-reserve').addEventListener('click', function() {
-    document.getElementById('reserve-modal').classList.add('hidden');
+    reserveModal.classList.add('hidden');
   });
 </script>
         </div>
@@ -229,7 +237,7 @@ $jsonLdProducts = json_encode($cars);
             <div class="hero-content">
                 <h2>Sewa Mobil Premium untuk Perjalanan Tanpa Kompromi</h2>
                 <p>Armada terawat, proses cepat, dan layanan terpercaya. Pilih mobil favorit Anda dan lakukan reservasi dalam hitungan menit.</p>
-                <a href="#" id="reserve-link" class="primary-btn hero-cta">Reservasi Sekarang</a>
+                <a href="#booking" class="primary-btn hero-cta">Reservasi Sekarang</a>
             </div>
         </div>
     </section>
