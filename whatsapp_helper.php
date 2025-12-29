@@ -1,9 +1,44 @@
 <?php
 /**
- * WhatsApp Helper Functions
+ * ============================================================================
+ * WHATSAPP HELPER FUNCTIONS - EliteCar Indonesia
+ * ============================================================================
  * 
- * Functions to generate WhatsApp links and messages
+ * File ini berisi fungsi-fungsi untuk integrasi WhatsApp:
+ * - Generate WhatsApp link dengan pesan ter-format
+ * - Template pesan untuk booking confirmation
+ * - Template pesan untuk customer notification
+ * - Template pesan untuk general inquiry
+ * 
+ * CARA PENGGUNAAN:
+ * 
+ * 1. Booking Confirmation (Admin ke EliteCar):
+ *    $link = getWhatsAppBookingLink($booking);
+ *    <a href="<?php echo $link; ?>" target="_blank">Send via WhatsApp</a>
+ * 
+ * 2. Customer Notification (Admin ke Customer):
+ *    $link = getWhatsAppCustomerLink($booking, '081234567890');
+ *    <a href="<?php echo $link; ?>" target="_blank">Notify Customer</a>
+ * 
+ * 3. General Inquiry (Customer ke EliteCar):
+ *    $link = getWhatsAppInquiryLink('Toyota Avanza');
+ *    <a href="<?php echo $link; ?>" target="_blank">Chat WhatsApp</a>
+ * 
+ * FITUR:
+ * - Auto-format pesan dengan detail lengkap
+ * - Support emoji untuk visual appeal
+ * - URL encoding otomatis
+ * - Professional message templates
+ * - Indonesian language
+ * 
+ * CATATAN:
+ * - Nomor WhatsApp EliteCar: +62-823-2864-9895
+ * - Pesan otomatis ter-format dengan markdown WhatsApp
+ * - Link akan membuka WhatsApp Web/App
+ * 
+ * ============================================================================
  */
+
 
 /**
  * Generate WhatsApp link for booking confirmation

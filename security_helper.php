@@ -1,8 +1,41 @@
 <?php
 /**
- * Security Helper Functions
+ * ============================================================================
+ * SECURITY HELPER FUNCTIONS - EliteCar Indonesia
+ * ============================================================================
  * 
- * CSRF Protection, Input Sanitization, Rate Limiting, XSS Prevention
+ * File ini berisi fungsi-fungsi keamanan untuk melindungi aplikasi dari:
+ * - CSRF (Cross-Site Request Forgery) attacks
+ * - XSS (Cross-Site Scripting) attacks
+ * - SQL Injection attacks
+ * - Brute Force attacks (via rate limiting)
+ * - Session Hijacking
+ * 
+ * CARA PENGGUNAAN:
+ * 
+ * 1. CSRF Protection:
+ *    - Di form: <?php echo csrfField(); ?>
+ *    - Di handler: requireCSRF();
+ * 
+ * 2. Input Sanitization:
+ *    - String: $clean = sanitizeString($_POST['name']);
+ *    - Email: $email = sanitizeEmail($_POST['email']);
+ *    - Integer: $id = sanitizeInt($_POST['id']);
+ * 
+ * 3. Rate Limiting:
+ *    - Check: if (!checkRateLimit('login', 5, 300)) { die('Too many attempts'); }
+ *    - Reset: resetRateLimit('login');
+ * 
+ * 4. XSS Prevention:
+ *    - Output: echo e($user_input);
+ *    - JS: <script>var data = <?php echo escapeJS($data); ?>;</script>
+ * 
+ * CATATAN:
+ * - File ini di-include otomatis di config.php
+ * - Security headers di-set otomatis untuk semua halaman
+ * - Session timeout: 30 menit (1800 detik)
+ * 
+ * ============================================================================
  */
 
 // ============================================================================
