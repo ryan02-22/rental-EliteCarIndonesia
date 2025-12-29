@@ -341,29 +341,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </p>
         </div>
 
-        <div class="divider">
-            <span>Informasi Akun</span>
-        </div>
-
-        <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 16px; border-radius: 12px; margin-top: 20px; border: 2px solid #059669;">
-            <p style="font-size: 14px; color: #ffffff; text-align: center; margin: 0 0 12px 0; font-weight: 600;">
-                🔑 <strong>Login sebagai Admin</strong>
-            </p>
-            <p style="font-size: 12px; color: #d1fae5; text-align: center; margin: 0 0 12px 0;">
-                Admin memiliki <strong>akses penuh</strong> ke seluruh aplikasi:
-            </p>
-            <ul style="font-size: 11px; color: #d1fae5; margin: 0; padding-left: 20px; list-style: none;">
-                <li style="margin-bottom: 6px;">✅ Dashboard dengan statistik lengkap</li>
-                <li style="margin-bottom: 6px;">✅ Kelola data mobil (CRUD)</li>
-                <li style="margin-bottom: 6px;">✅ Kelola booking pelanggan</li>
-                <li style="margin-bottom: 6px;">✅ Laporan transaksi</li>
-                <li style="margin-bottom: 6px;">✅ Semua fitur customer</li>
-            </ul>
-        </div>
-
-        <div style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); padding: 12px; border-radius: 8px; margin-top: 16px; border: 2px solid #4f46e5;">
+        <div style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); padding: 12px; border-radius: 8px; margin-top: 20px; border: 2px solid #4f46e5;">
             <p style="font-size: 13px; color: #ffffff; text-align: center; margin: 0; font-weight: 600;">
-                Karya TI.24.CA.1
+                💻 Karya TI.24.CA.1
             </p>
         </div>
     </div>
