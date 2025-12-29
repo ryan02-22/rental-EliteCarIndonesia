@@ -13,15 +13,16 @@ const FALLBACK_CARS = [
   { id: 'c2', name: 'Honda CR-V', type: 'SUV', pricePerDay: 800000, image: 'crv.jpg' },
   { id: 'c3', name: 'Daihatsu Terios', type: 'SUV', pricePerDay: 650000, image: 'terios.jpg' },
   { id: 'c4', name: 'Hyundai Palisade', type: 'SUV', pricePerDay: 1200000, image: 'palisade.jpg' },
-  { id: 'c5', name: 'Toyota Avanza', type: 'Van', pricePerDay: 550000, image: 'avanza.jpg' },
+  { id: 'c5', name: 'Toyota Avanza', type: 'Van', pricePerDay: 550000, image: ['avanza1.webp', 'avanza2.webp', 'avanza3.webp', 'avanza4.webp'] },
   { id: 'c6', name: 'Mitsubishi Xpander', type: 'Van', pricePerDay: 600000, image: 'xpander.jpg' },
   { id: 'c7', name: 'Suzuki Ertiga', type: 'Van', pricePerDay: 520000, image: 'ertiga.jpg' },
-  { id: 'c8', name: 'Kia Carnival', type: 'Van', pricePerDay: 900000, image: 'carnival.jpg' },
-  { id: 'c9', name: 'Honda City', type: 'Sedan', pricePerDay: 500000, image: 'city.jpg' },
+  { id: 'c8', name: 'Kia Carnival', type: 'Van', pricePerDay: 900000, image: ['carnivalkia-01.jpg', 'carnivalkia-02.jpg', 'carnivalkia-03.jpg', 'carnivalkia-04.jpg'] },
+  { id: 'c9', name: 'Honda City', type: 'Sedan', pricePerDay: 500000, image: ['city1-a.webp', 'city2-b.webp', 'city3-c.webp', 'city4-d.webp', 'city5-e.webp', 'city6-f.jpg'] },
   { id: 'c10', name: 'Honda Civic', type: 'Sedan', pricePerDay: 750000, image: 'civic.jpg' },
   { id: 'c11', name: 'Toyota Camry', type: 'Sedan', pricePerDay: 900000, image: 'camry.jpg' },
   { id: 'c12', name: 'Mazda 6', type: 'Sedan', pricePerDay: 950000, image: 'mazda.jpg' }
 ];
+
 
 // State
 let cars = [];
@@ -120,10 +121,30 @@ function renderCars(list) {
     article.setAttribute('data-price', car.pricePerDay);
     article.setAttribute('data-name', car.name);
 
-    // single image layout (kept simple and consistent)
-    const imgSrc = Array.isArray(car.image) ? car.image[0] : car.image;
+    // Check if car has multiple images (array) or single image (string)
+    let imageHTML = '';
+
+    if (Array.isArray(car.image) && car.image.length > 1) {
+      // Multiple images - create slider
+      const slidesHTML = car.image.map((img, index) =>
+        `<img src="images/${img}" alt="${car.name} ${index + 1}" class="slide ${index === 0 ? 'active' : ''}" loading="lazy">`
+      ).join('');
+
+      imageHTML = `
+        <div class="slider" data-index="0">
+          ${slidesHTML}
+          <button class="prev" aria-label="Previous image">‹</button>
+          <button class="next" aria-label="Next image">›</button>
+        </div>
+      `;
+    } else {
+      // Single image - simple img tag
+      const imgSrc = Array.isArray(car.image) ? car.image[0] : car.image;
+      imageHTML = `<img src="images/${imgSrc}" alt="${car.name}" class="card-image" loading="lazy">`;
+    }
+
     article.innerHTML = `
-      <img src="images/${imgSrc}" alt="${car.name}" class="card-image" loading="lazy">
+      ${imageHTML}
       <div class="card-body">
         <h3 class="car-name">${car.name}</h3>
         <p class="car-meta"><span>${car.type}</span><span class="price">${fmtIDR.format(car.pricePerDay)}/hari</span></p>
