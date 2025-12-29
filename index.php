@@ -210,8 +210,8 @@ $jsonLdProducts = json_encode($cars);
       /* Listener form dipindahkan ke app.js untuk handle validasi */
 
       document.getElementById('confirm-reserve').addEventListener('click', function() {
-        // Programmatically submit the form (bypasses submit listener)
-        if (bookingForm) bookingForm.submit();
+        // Programmatically submit the form using prototype to bypass any overrides
+        if (bookingForm) HTMLFormElement.prototype.submit.call(bookingForm);
         reserveModal.classList.add('hidden');
       });
 

@@ -387,13 +387,13 @@ async function handleFormSubmit(e) {
   } else {
     // Fallback jika modal tidak ditemukan (misal di halaman lain/error loading)
     if (confirm('Apakah Anda yakin ingin melakukan reservasi?')) {
-      bookingForm.submit();
+      HTMLFormElement.prototype.submit.call(bookingForm);
     }
   }
 
   // CATATAN: Submit sesungguhnya akan di-trigger oleh tombol "Ya" di dalam modal
-  // yang menjalankan bookingForm.submit() (bypass listener ini)
-  // Tapi kita biarkan untuk backward compatibility jika ada yang pakai AJAX
+  // yang menjalankan bookingForm.submit() via index.php script
+  // Tapi index.php script juga harus diperbaiki untuk pakai prototype submit
 }
 
 // ============================================================================
