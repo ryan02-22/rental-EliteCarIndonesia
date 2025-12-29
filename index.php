@@ -153,6 +153,9 @@ $jsonLdProducts = json_encode($cars);
                     <li><a href="#cars" class="nav-link">Cars</a></li>
                     <li><a href="#contact" class="nav-link">Contact</a></li>
                     <?php if ($current_user): ?>
+                        <?php if (isAdmin()): ?>
+                            <li><a href="admin/dashboard.php" class="nav-link" style="color: #10b981; font-weight: 700;">🔑 Admin Panel</a></li>
+                        <?php endif; ?>
                         <li><a href="#" class="nav-link" style="color: #6366f1;">👤 <?php echo htmlspecialchars($current_user['username']); ?></a></li>
                         <li><a href="logout.php" class="nav-link" style="color: #ef4444;">Logout</a></li>
                     <?php else: ?>

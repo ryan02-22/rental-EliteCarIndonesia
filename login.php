@@ -342,13 +342,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <div class="divider">
-            <span>Login untuk akses penuh</span>
+            <span>Informasi Akun</span>
         </div>
 
-        <div style="background: #f3f4f6; padding: 12px; border-radius: 8px; margin-top: 20px;">
-            <p style="font-size: 12px; color: #6b7280; text-align: center; margin: 0;">
-                <strong>Demo Account:</strong><br>
-                Username: <code>admin</code> | Password: <code>password123</code>
+        <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 16px; border-radius: 12px; margin-top: 20px; border: 2px solid #059669;">
+            <p style="font-size: 14px; color: #ffffff; text-align: center; margin: 0 0 12px 0; font-weight: 600;">
+                🔑 <strong>Login sebagai Admin</strong>
+            </p>
+            <p style="font-size: 12px; color: #d1fae5; text-align: center; margin: 0 0 12px 0;">
+                Admin memiliki <strong>akses penuh</strong> ke seluruh aplikasi:
+            </p>
+            <ul style="font-size: 11px; color: #d1fae5; margin: 0; padding-left: 20px; list-style: none;">
+                <li style="margin-bottom: 6px;">✅ Dashboard dengan statistik lengkap</li>
+                <li style="margin-bottom: 6px;">✅ Kelola data mobil (CRUD)</li>
+                <li style="margin-bottom: 6px;">✅ Kelola booking pelanggan</li>
+                <li style="margin-bottom: 6px;">✅ Laporan transaksi</li>
+                <li style="margin-bottom: 6px;">✅ Semua fitur customer</li>
+            </ul>
+        </div>
+
+        <div style="background: #f3f4f6; padding: 14px; border-radius: 8px; margin-top: 16px; border: 1px solid #e5e7eb;">
+            <p style="font-size: 13px; color: #374151; text-align: center; margin: 0 0 10px 0; font-weight: 600;">
+                📝 Akun Demo (Admin)
+            </p>
+            <div style="background: white; padding: 10px; border-radius: 6px; font-family: monospace; font-size: 12px;">
+                <p style="margin: 4px 0; color: #1f2937;"><strong>Username:</strong> <code style="background: #fef3c7; padding: 2px 6px; border-radius: 4px; color: #92400e;">admin</code> / <code style="background: #fef3c7; padding: 2px 6px; border-radius: 4px; color: #92400e;">admin2</code> / <code style="background: #fef3c7; padding: 2px 6px; border-radius: 4px; color: #92400e;">admin3</code></p>
+                <p style="margin: 4px 0; color: #1f2937;"><strong>Password:</strong> <code style="background: #dbeafe; padding: 2px 6px; border-radius: 4px; color: #1e40af;">password</code></p>
+            </div>
+            <p style="font-size: 10px; color: #9ca3af; text-align: center; margin: 8px 0 0 0;">
+                ⚠️ Password: <strong>password</strong> (bukan password123)
             </p>
         </div>
     </div>
