@@ -286,7 +286,7 @@ function setupBookingForm() {
  */
 function getSelectedCar() {
   const id = carSelect.value;
-  return cars.find(c => c.id === id) || null;
+  return cars.find(c => String(c.id) === String(id)) || null;
 }
 
 /**
