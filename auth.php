@@ -350,8 +350,8 @@
 <body>
     <div class="container" id="container">
         <!-- Sign Up Form -->
-        <div class="form-container sign-up-container">
             <form action="register_process.php" method="POST">
+                <?php echo csrfField(); ?>
                 <h1>Create Account</h1>
                 <div class="social-container">
                     <a href="#" class="social"><i>f</i></a>
@@ -375,8 +375,8 @@
         </div>
 
         <!-- Sign In Form -->
-        <div class="form-container sign-in-container">
             <form action="login_process.php" method="POST">
+                <?php echo csrfField(); ?>
                 <h1>Sign In</h1>
                 <div class="social-container">
                     <a href="#" class="social"><i>f</i></a>
@@ -396,8 +396,18 @@
                         <?php echo htmlspecialchars($_GET['success']); ?>
                     </div>
                 <?php endif; ?>
+
+                <?php if (isset($_SESSION['login_message'])): ?>
+                    <div class="alert alert-info">
+                        <?php 
+                            echo htmlspecialchars($_SESSION['login_message']); 
+                            unset($_SESSION['login_message']); 
+                        ?>
+                    </div>
+                <?php endif; ?>
                 
                 <input type="text" name="username" placeholder="Username or Email" required />
+
                 <input type="password" name="password" placeholder="Password" required />
                 <a href="#">Forgot Your Password?</a>
                 <button type="submit">Sign In</button>

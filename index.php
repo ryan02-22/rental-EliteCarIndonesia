@@ -152,16 +152,26 @@ $jsonLdProducts = json_encode($cars);
                     <li><a href="#home" class="nav-link">Home</a></li>
                     <li><a href="#cars" class="nav-link">Cars</a></li>
                     <li><a href="#contact" class="nav-link">Contact</a></li>
-                    <?php if ($current_user): ?>
-                        <?php if (isAdmin()): ?>
-                            <li><a href="admin/dashboard.php" class="nav-link" style="color: #10b981; font-weight: 700;">🔑 Admin Panel</a></li>
-                        <?php endif; ?>
-                        <li><a href="#" class="nav-link" style="color: #6366f1;">👤 <?php echo htmlspecialchars($current_user['username']); ?></a></li>
-                        <li><a href="logout.php" class="nav-link" style="color: #ef4444;">Logout</a></li>
-                    <?php else: ?>
-                        <li><a href="login.php" class="nav-link">Login</a></li>
-                        <li><a href="register.php" class="nav-link" style="color: #6366f1;">Register</a></li>
+                    <?php if (isLoggedIn()): ?>
+                    <li class="nav-item">
+                        <span class="nav-link user-name">👤 <?php echo htmlspecialchars($current_user['username']); ?></span>
+                    </li>
+                    <?php if (isAdmin()): ?>
+                    <li class="nav-item">
+                        <a href="admin/dashboard.php" class="nav-link admin-link" style="color: #6366f1; font-weight: 700;">🔑 Admin Panel</a>
+                    </li>
                     <?php endif; ?>
+                    <li class="nav-item">
+                        <a href="logout.php" class="nav-link login-btn">Logout</a>
+                    </li>
+                <?php else: ?>
+                    <li class="nav-item">
+                        <a href="auth.php" class="nav-link">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="auth.php?mode=register" class="nav-link login-btn">Daftar</a>
+                    </li>
+                <?php endif; ?>
                 </ul>
             </nav>
         </div>

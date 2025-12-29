@@ -6,14 +6,24 @@
 require_once 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $full_name = trim($_POST['full_name'] ?? '');
-    $username = trim($_POST['username'] ?? '');
-    $email = trim($_POST['email'] ?? '');
+    // 1. Verify CSRF Token
+    requireCSRF();
+    
+    // 2. Check Rate Limit (Maks 3 registrasi per jam dari IP yang sama)
+    if (!checkRateLimit('register', 3, 3600)) {
+        header('Location: auth.php?register_error=' . urlencode('Terlalu banyak permintaan registrasi. Silakan coba lagi nanti.') . '&mode=register');
+        exit;
+    }
+    
+    // 3. Sanitize Input
+    $full_name = sanitizeString($_POST['full_name'] ?? '');
+    $username = sanitizeString($_POST['username'] ?? '');
+    $email = sanitizeEmail($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     
     // Validation
-    if (empty($full_name) || empty($username) || empty($email) || empty($password)) {
-        header('Location: auth.php?register_error=' . urlencode('Semua field harus diisi!') . '&mode=register');
+    if (empty($full_name) || empty($username) || !$email || empty($password)) {
+        header('Location: auth.php?register_error=' . urlencode('Data tidak valid atau field kosong!') . '&mode=register');
         exit;
     }
     

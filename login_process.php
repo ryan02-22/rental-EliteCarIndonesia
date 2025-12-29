@@ -6,8 +6,18 @@
 require_once 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username'] ?? '');
-    $password = $_POST['password'] ?? '';
+    // 1. Verify CSRF Token
+    requireCSRF();
+    
+    // 2. Check Rate Limit
+    if (!checkRateLimit('login', 5, 300)) {
+        header('Location: auth.php?login_error=' . urlencode('Terlalu banyak percobaan. Silakan coba lagi dalam ' . getRateLimitRemaining('login', 300) . ' detik.'));
+        exit;
+    }
+    
+    // 3. Sanitize Input
+    $username = sanitizeString($_POST['username'] ?? '');
+    $password = $_POST['password'] ?? ''; // Jangan sanitize password (bisa mengandung karakter khusus)
     
     if (empty($username) || empty($password)) {
         header('Location: auth.php?login_error=' . urlencode('Username dan password harus diisi!'));
@@ -25,7 +35,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if (password_verify($password, $user['password'])) {
             // Login success
+            resetRateLimit('login'); // Reset percobaan
+            
             $_SESSION['user_id'] = $user['id'];
+
             $_SESSION['username'] = $user['username'];
             $_SESSION['email'] = $user['email'];
             $_SESSION['full_name'] = $user['full_name'];

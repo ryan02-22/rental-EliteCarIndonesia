@@ -109,7 +109,7 @@ setSecurityHeaders();
 if (isLoggedIn() && !checkSessionTimeout(1800)) {
     session_unset();
     session_destroy();
-    header('Location: login.php?timeout=1');
+    header('Location: auth.php?timeout=1');
     exit;
 }
 
@@ -117,7 +117,7 @@ if (isLoggedIn() && !checkSessionTimeout(1800)) {
 if (isLoggedIn() && !validateSessionFingerprint()) {
     session_unset();
     session_destroy();
-    header('Location: login.php?security=1');
+    header('Location: auth.php?security=1');
     exit;
 }
 
@@ -215,7 +215,8 @@ function getCurrentUser() {
  * requireLogin();  // Di awal file yang butuh login
  * // Code di bawah ini hanya jalan jika user sudah login
  */
-function requireLogin($redirect = 'login.php') {
+function requireLogin($redirect = 'auth.php') {
+
     // Cek apakah sudah login
     if (!isLoggedIn()) {
         // Simpan URL tujuan di session untuk redirect back setelah login
