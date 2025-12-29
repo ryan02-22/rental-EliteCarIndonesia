@@ -2,8 +2,16 @@
 // ============================================================================
 // EliteCar Indonesia - Register Page
 // ============================================================================
-// File ini menangani proses registrasi user baru
+// File ini menangani proses registrasi user baru sebagai CUSTOMER
+// 
+// PENTING - SISTEM ROLE:
+// - Semua user yang register via form ini otomatis jadi CUSTOMER (role='customer')
+// - Customer UNLIMITED (tidak ada batasan jumlah)
+// - ADMIN tidak bisa dibuat via form ini (harus manual di database, maksimal 3)
+// 
 // Fitur: Validasi input, pengecekan duplikasi, hashing password, auto-login
+// ============================================================================
+
 
 require_once 'config.php';
 
@@ -22,6 +30,8 @@ if (isLoggedIn()) {
 // ============================================================================
 $error = '';      // Untuk menyimpan pesan error
 $success = '';    // Untuk menyimpan pesan sukses
+// CATATAN: Registrasi customer TIDAK dibatasi
+// Yang dibatasi hanya pembuatan admin (maksimal 3), dan itu dibuat manual di database
 
 // ============================================================================
 // PROSES FORM REGISTRASI
@@ -111,9 +121,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // ============================================================
                 // STEP 7: INSERT USER BARU KE DATABASE
                 // ============================================================
-                $stmt = $conn->prepare("INSERT INTO users (username, email, password, full_name, phone) VALUES (?, ?, ?, ?, ?)");
+                /**
+                 * PENTING - ROLE ASSIGNMENT:
+                 * 
+                 * Semua user yang register melalui form ini OTOMATIS mendapat role 'customer'
+                 * Role di-HARDCODE di query untuk KEAMANAN:
+                 * 
+                 * ✅ BENAR: role='customer' (hardcoded di query)
+                 * ❌ SALAH: role=? dengan bind_param (bisa dimanipulasi)
+                 * 
+                 * Alasan keamanan:
+                 * - Mencegah user jahat mengirim POST data dengan role='admin'
+                 * - Hanya database admin yang bisa membuat admin (maksimal 3)
+                 * - Customer unlimited, admin terbatas
+                 * 
+                 * Cara membuat admin:
+                 * - Manual via SQL: INSERT INTO users (..., role='admin')
+                 * - Via phpMyAdmin atau Docker command
+                 * - TIDAK BISA via form register ini
+                 */
+                $stmt = $conn->prepare("INSERT INTO users (username, email, password, full_name, phone, role) VALUES (?, ?, ?, ?, ?, 'customer')");
                 $stmt->bind_param("sssss", $username, $email, $hashed_password, $full_name, $phone);
                 // "sssss" = 5 parameter bertipe string
+                // Role 'customer' di-hardcode di query untuk keamanan (tidak bisa diubah dari form)
                 
                 if ($stmt->execute()) {
                     // Registrasi berhasil
@@ -122,12 +152,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // ========================================================
                     // STEP 8: AUTO-LOGIN SETELAH REGISTRASI
                     // ========================================================
-                    // Fitur opsional: langsung login user setelah registrasi
-                    // insert_id mengembalikan ID dari row yang baru di-insert
+                    /**
+                     * Fitur UX: Langsung login user setelah registrasi berhasil
+                     * insert_id = ID dari row yang baru di-insert (auto-increment)
+                     * 
+                     * Session yang di-set:
+                     * - user_id: ID user di database
+                     * - username: Username user
+                     * - email: Email user
+                     * - full_name: Nama lengkap user
+                     * - user_role: SELALU 'customer' untuk registrasi via form
+                     */
                     $_SESSION['user_id'] = $stmt->insert_id;
                     $_SESSION['username'] = $username;
                     $_SESSION['email'] = $email;
                     $_SESSION['full_name'] = $full_name;
+                    
+                    /**
+                     * SET ROLE DI SESSION
+                     * 
+                     * Hardcode 'customer' karena:
+                     * 1. Semua registrasi via form = customer
+                     * 2. Konsisten dengan role di database
+                     * 3. Keamanan: Tidak bisa dimanipulasi jadi 'admin'
+                     * 
+                     * Role ini digunakan oleh:
+                     * - isAdmin() di config.php
+                     * - requireAdmin() untuk proteksi halaman admin
+                     */
+                    $_SESSION['user_role'] = 'customer';
+
                     
                     // ========================================================
                     // STEP 9: REDIRECT KE HALAMAN UTAMA

@@ -299,11 +299,22 @@ function populateCarSelect(list) {
 }
 
 /**
- * Handle form submission dengan validasi dan API call
+ * Handle form submission dengan validasi
+ * 
+ * PERUBAHAN PENTING:
+ * - Form di-submit secara NORMAL ke booking_process.php (bukan AJAX)
+ * - Ini memungkinkan:
+ *   1. Login redirect jika user belum login
+ *   2. Data form tersimpan di session
+ *   3. Auto-restore setelah login
+ * 
  * @param {Event} e - Submit event
  */
 async function handleFormSubmit(e) {
-  e.preventDefault();
+  // JANGAN preventDefault! Biarkan form submit normal ke booking_process.php
+  // e.preventDefault(); // ← DIHAPUS
+
+  // Reset error messages
   formSuccessEl.textContent = '';
   nameErrorEl.textContent = '';
   dateErrorEl.textContent = '';
@@ -313,14 +324,16 @@ async function handleFormSubmit(e) {
   const selected = getSelectedCar();
   const days = calculateDays(startDateEl.value, endDateEl.value);
 
-  // Validasi
+  // Validasi frontend (sebelum submit)
   if (!name) {
+    e.preventDefault(); // Prevent submit jika validasi gagal
     nameErrorEl.textContent = 'Nama penyewa wajib diisi.';
     bookingForm.renterName.focus();
     return;
   }
 
   if (!email || !bookingForm.renterEmail.validity.valid) {
+    e.preventDefault(); // Prevent submit jika validasi gagal
     const emailError = document.createElement('small');
     emailError.className = 'error';
     emailError.id = 'emailError';
@@ -331,36 +344,27 @@ async function handleFormSubmit(e) {
   }
 
   if (!selected) {
+    e.preventDefault(); // Prevent submit jika validasi gagal
     alert('Silakan pilih mobil.');
     carSelect.focus();
     return;
   }
 
   if (days <= 0) {
+    e.preventDefault(); // Prevent submit jika validasi gagal
     dateErrorEl.textContent = 'Tanggal selesai harus setelah tanggal mulai.';
     endDateEl.focus();
     return;
   }
 
-  // Submit ke API
-  const payload = {
-    name,
-    email,
-    carId: selected.id,
-    startDate: startDateEl.value,
-    endDate: endDateEl.value,
-    totalPrice: selected.pricePerDay * days
-  };
+  // Jika semua validasi lolos, biarkan form submit normal ke booking_process.php
+  // Form akan di-submit dengan method POST
+  // booking_process.php akan handle:
+  // - Cek login (jika belum, redirect ke login dengan simpan data di session)
+  // - Proses booking (jika sudah login)
 
-  try {
-    const result = await submitBooking(payload);
-    formSuccessEl.textContent = `Reservasi berhasil! ${name} memesan ${selected.name} selama ${days} hari. Total: ${fmtIDR.format(payload.totalPrice)}. ID Booking: ${result.bookingId || 'N/A'}`;
-    bookingForm.reset();
-    updatePricing();
-  } catch (error) {
-    formSuccessEl.textContent = '';
-    alert(`Terjadi kesalahan: ${error.message}`);
-  }
+  // CATATAN: Code di bawah ini tidak akan dijalankan karena form sudah submit
+  // Tapi kita biarkan untuk backward compatibility jika ada yang pakai AJAX
 }
 
 // ============================================================================
@@ -420,15 +424,28 @@ function initSliders() {
 
 /**
  * Setup smooth scroll navigation dengan animasi klik
+ * Hanya untuk link internal (#hash), biarkan link eksternal (.php) berfungsi normal
  */
 function setupNavigation() {
   const navLinks = document.querySelectorAll('.nav-link');
 
   navLinks.forEach(link => {
     link.addEventListener('click', (e) => {
-      e.preventDefault();
       const targetId = link.getAttribute('href');
-      
+
+      // ====================================================================
+      // PENTING: Hanya intercept link internal (yang dimulai dengan #)
+      // Biarkan link eksternal (.php files) berfungsi normal
+      // ====================================================================
+      if (!targetId || !targetId.startsWith('#')) {
+        // Ini adalah link eksternal (login.php, register.php, logout.php, dll)
+        // Jangan preventDefault, biarkan browser handle navigasi normal
+        return;
+      }
+
+      // Untuk link internal (#home, #cars, #booking, #contact), lakukan smooth scroll
+      e.preventDefault();
+
       // Animasi klik
       link.classList.add('clicked');
       setTimeout(() => {
@@ -441,11 +458,11 @@ function setupNavigation() {
         // Hitung tinggi header secara dinamis
         const header = document.querySelector('.app-header');
         const headerHeight = header ? header.offsetHeight : 100;
-        
+
         // Hitung posisi target dengan offset
         const elementPosition = targetElement.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - headerHeight - 10; // 10px extra spacing
-        
+
         window.scrollTo({
           top: offsetPosition,
           behavior: 'smooth'

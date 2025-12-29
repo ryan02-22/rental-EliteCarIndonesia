@@ -3,10 +3,76 @@
 // EliteCar Indonesia - Booking Process
 // ============================================================================
 // File ini memproses form booking dari halaman utama
+// 
+// FITUR BARU: Save Form Data Before Login
+// - Jika user belum login, simpan data form di session
+// - Setelah login, restore data form dan proses booking
+// - User tidak perlu isi ulang form
+// 
 // Fitur: Validasi input, perhitungan harga, insert booking ke database
+// ============================================================================
 
 require_once 'config.php';
-requireLogin();  // User harus login untuk melakukan booking
+
+// ============================================================================
+// CEK LOGIN & SIMPAN DATA FORM
+// ============================================================================
+/**
+ * SMART LOGIN CHECK
+ * 
+ * Jika user belum login DAN ada data POST (submit form):
+ * 1. Simpan data form ke session
+ * 2. Redirect ke login
+ * 3. Setelah login, kembali ke sini
+ * 4. Restore data form dari session
+ * 5. Proses booking
+ */
+if (!isLoggedIn()) {
+    // Cek apakah ada data POST (user submit form)
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST)) {
+        // Simpan data form ke session agar tidak hilang
+        $_SESSION['booking_form_data'] = [
+            'car_id' => $_POST['car_id'] ?? '',
+            'renter_name' => $_POST['renter_name'] ?? '',
+            'renter_email' => $_POST['renter_email'] ?? '',
+            'start_date' => $_POST['start_date'] ?? '',
+            'end_date' => $_POST['end_date'] ?? '',
+        ];
+        
+        // Set pesan info untuk login page
+        $_SESSION['login_message'] = 'Silakan login terlebih dahulu untuk melanjutkan reservasi Anda.';
+    }
+    
+    // Redirect ke login (requireLogin akan simpan URL tujuan)
+    requireLogin();
+}
+
+// ============================================================================
+// RESTORE & PROSES DATA FORM DARI SESSION (Jika Ada)
+// ============================================================================
+/**
+ * SMART FORM RESTORATION
+ * 
+ * Jika user baru login dan ada data form yang tersimpan:
+ * 1. Ambil data dari session
+ * 2. Proses booking langsung (bypass form submission)
+ * 3. Hapus dari session
+ * 4. Tampilkan hasil
+ * 
+ * Ini mengatasi masalah: $_SERVER['REQUEST_METHOD'] tidak bisa diubah
+ */
+$restored_from_session = false;
+
+if (isset($_SESSION['booking_form_data']) && !empty($_SESSION['booking_form_data'])) {
+    // Flag bahwa data di-restore dari session
+    $restored_from_session = true;
+    
+    // Restore data form ke $_POST untuk diproses
+    $_POST = $_SESSION['booking_form_data'];
+    
+    // Hapus data form dari session (sudah tidak diperlukan)
+    unset($_SESSION['booking_form_data']);
+}
 
 $error = '';
 $success = '';
@@ -14,7 +80,10 @@ $success = '';
 // ============================================================================
 // PROSES FORM BOOKING
 // ============================================================================
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// Proses jika:
+// 1. Form di-submit via POST (normal flow), ATAU
+// 2. Data di-restore dari session (after login flow)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' || $restored_from_session) {
     
     // ========================================================================
     // STEP 1: AMBIL DATA DARI FORM
@@ -29,7 +98,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // STEP 2: VALIDASI INPUT
     // ========================================================================
     if ($car_id <= 0 || empty($renter_name) || empty($renter_email) || empty($start_date) || empty($end_date)) {
-        $error = 'Semua field wajib diisi!';
+        // Debug info untuk troubleshooting
+        $debug_info = '';
+        if ($restored_from_session) {
+            $debug_info = ' (Data di-restore dari session setelah login)';
+        }
+        
+        $error = 'Semua field wajib diisi!' . $debug_info;
+        
+        // Tambahan info untuk debugging (hapus di production)
+        if ($restored_from_session) {
+            $error .= '<br><small>Debug: car_id=' . $car_id . ', name=' . ($renter_name ?: 'kosong') . ', email=' . ($renter_email ?: 'kosong') . ', start=' . ($start_date ?: 'kosong') . ', end=' . ($end_date ?: 'kosong') . '</small>';
+        }
         
     } else {
         // ====================================================================

@@ -177,16 +177,26 @@ function getCurrentUser() {
  * 
  * Paksa user untuk login. Jika belum login, redirect ke halaman login
  * 
+ * FITUR BARU: Redirect Back After Login
+ * - Menyimpan URL tujuan di session
+ * - Setelah login berhasil, redirect kembali ke URL tujuan
+ * - Berguna untuk booking, checkout, dll
+ * 
  * @param string $redirect - URL halaman login (default: 'login.php')
  * 
  * Cara pakai:
- * requireLogin();  // Di awal file admin
+ * requireLogin();  // Di awal file yang butuh login
  * // Code di bawah ini hanya jalan jika user sudah login
  */
 function requireLogin($redirect = 'login.php') {
     // Cek apakah sudah login
     if (!isLoggedIn()) {
-        // header() = set HTTP header untuk redirect
+        // Simpan URL tujuan di session untuk redirect back setelah login
+        // $_SERVER['REQUEST_URI'] = URL lengkap yang user coba akses
+        // Contoh: /booking_process.php atau /admin/dashboard.php
+        $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
+        
+        // header() = set HTTP header untuk redirect ke login
         header("Location: $redirect");
         
         // exit() = stop program (code di bawah tidak dijalankan)
@@ -200,11 +210,17 @@ function requireLogin($redirect = 'login.php') {
  * 
  * Cek apakah user yang sedang login adalah admin
  * 
+ * SISTEM ROLE:
+ * - 'customer' = User biasa yang register via form (unlimited)
+ * - 'admin' = Pemilik/administrator (maksimal 3, dibuat manual di database)
+ * 
  * @return bool - true jika admin, false jika bukan
  * 
  * Cara pakai:
  * if (isAdmin()) {
  *     echo "Anda adalah admin";
+ * } else {
+ *     echo "Anda adalah customer";
  * }
  */
 function isAdmin() {
@@ -242,6 +258,11 @@ function isAdmin() {
  * 
  * Paksa user untuk menjadi admin. Jika bukan admin, redirect dengan error
  * 
+ * KEAMANAN:
+ * - Fungsi ini digunakan di semua halaman admin panel
+ * - Customer yang coba akses admin panel akan di-redirect ke homepage
+ * - Pesan error akan ditampilkan di session flash message
+ * 
  * @param string $redirect - URL redirect jika bukan admin (default: '../index.php')
  * 
  * Cara pakai:
@@ -263,6 +284,63 @@ function requireAdmin($redirect = '../index.php') {
     }
     // Jika admin, lanjutkan
 }
+
+/**
+ * getAdminCount()
+ * 
+ * Hitung jumlah admin yang terdaftar di sistem
+ * 
+ * @return int - Jumlah admin
+ * 
+ * Cara pakai:
+ * $admin_count = getAdminCount();
+ * echo "Total admin: " . $admin_count;
+ */
+function getAdminCount() {
+    $conn = getDBConnection();
+    
+    // Query untuk hitung jumlah user dengan role 'admin'
+    $stmt = $conn->prepare("SELECT COUNT(*) as total FROM users WHERE role = 'admin'");
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    
+    $stmt->close();
+    $conn->close();
+    
+    return (int)$row['total'];
+}
+
+/**
+ * isRegistrationAllowed()
+ * 
+ * Cek apakah pembuatan admin baru masih diperbolehkan
+ * 
+ * CATATAN PENTING:
+ * - Customer/Pelanggan: UNLIMITED (tidak ada batasan registrasi)
+ * - Admin: Maksimal 3 orang (dibuat manual di database, BUKAN via form register)
+ * - Fungsi ini hanya untuk cek limit admin, BUKAN untuk blokir registrasi customer
+ * 
+ * @return bool - true jika admin belum penuh (< 3), false jika sudah penuh (>= 3)
+ * 
+ * Cara pakai:
+ * if (isRegistrationAllowed()) {
+ *     echo "Masih bisa buat admin baru (manual di database)";
+ * } else {
+ *     echo "Admin sudah penuh (3/3)";
+ * }
+ */
+function isRegistrationAllowed() {
+    // Limit maksimal admin adalah 3
+    $max_admins = 3;
+    
+    // Ambil jumlah admin saat ini
+    $current_admin_count = getAdminCount();
+    
+    // Return true jika jumlah admin masih di bawah limit
+    return $current_admin_count < $max_admins;
+}
+
 
 
 // ============================================================================

@@ -3,10 +3,34 @@
 // EliteCar Indonesia - Admin Dashboard
 // ============================================================================
 // File ini menampilkan dashboard admin dengan statistik dan data terbaru
+// 
+// PROTEKSI ADMIN:
+// - Halaman ini HANYA bisa diakses oleh user dengan role='admin'
+// - requireAdmin() akan redirect customer ke homepage dengan pesan error
+// - Admin maksimal 3 orang (dibuat manual di database)
+// 
 // Fitur: Statistik (users, cars, bookings, revenue), Recent bookings
+// ============================================================================
 
 require_once '../config.php';
-requireAdmin();  // Hanya admin yang bisa akses halaman ini (cek di config.php)
+
+/**
+ * PROTEKSI HALAMAN ADMIN
+ * 
+ * requireAdmin() melakukan 2 pengecekan:
+ * 1. Cek apakah user sudah login (via requireLogin())
+ * 2. Cek apakah user memiliki role='admin' (via isAdmin())
+ * 
+ * Jika BUKAN admin:
+ * - Set error message di session
+ * - Redirect ke ../index.php (homepage)
+ * - Code di bawah ini tidak akan dijalankan
+ * 
+ * Jika ADALAH admin:
+ * - Lanjutkan ke dashboard
+ * - Akses penuh ke semua fitur admin
+ */
+requireAdmin();  // Hanya admin yang bisa akses halaman ini
 
 $current_user = getCurrentUser();
 $conn = getDBConnection();

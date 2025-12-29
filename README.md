@@ -240,7 +240,7 @@ docker-compose up -d
 
 ## 🔧 Metode 2: XAMPP (Traditional)
 
-### **🔧 Persiapan Awal**
+### **🔧 Persiapan Awal (Hanya Sekali)**
 
 #### **Step 1: Install XAMPP**
 
@@ -248,83 +248,239 @@ docker-compose up -d
    - Buka: https://www.apachefriends.org/
    - Download versi **PHP 8.0** atau lebih baru
    - File size ~150MB
+   - Pilih versi untuk Windows
 
 2. **Install XAMPP**
-   - Jalankan installer
-   - Install di `C:\xampp` (default)
+   - Jalankan installer yang sudah di-download
+   - Install di `C:\xampp` (default - **RECOMMENDED**)
    - Pilih komponen: **Apache**, **MySQL**, **PHP**, **phpMyAdmin**
+   - Klik Next → Next → Install
+   - Tunggu sampai instalasi selesai (~5 menit)
 
 3. **Verifikasi Instalasi**
-   - Buka **XAMPP Control Panel**
-   - Pastikan Apache dan MySQL bisa di-start
+   - Buka **XAMPP Control Panel** dari Start Menu
+   - Pastikan Apache dan MySQL bisa di-start (tombol "Start" tersedia)
 
 ---
 
-### **▶️ Menjalankan Aplikasi**
+### **▶️ Menjalankan Aplikasi (Setiap Kali)**
 
 #### **Step 1: Start XAMPP Services**
 
-1. Buka **XAMPP Control Panel**
-2. Klik **"Start"** pada **Apache**
-   - Status harus berubah jadi hijau
-3. Klik **"Start"** pada **MySQL**
-   - Status harus berubah jadi hijau
+1. **Buka XAMPP Control Panel**
+   - Cari "XAMPP" di Start Menu
+   - Klik kanan → Run as Administrator (recommended)
 
-> **⚠️ Troubleshooting**: Jika port 80/3306 sudah dipakai, ubah port di XAMPP config.
+2. **Start Apache**
+   - Klik tombol **"Start"** di sebelah **Apache**
+   - Tunggu sampai status berubah jadi **hijau**
+   - Module name akan berubah warna jadi hijau
+   - Port default: 80, 443
+
+3. **Start MySQL**
+   - Klik tombol **"Start"** di sebelah **MySQL**
+   - Tunggu sampai status berubah jadi **hijau**
+   - Module name akan berubah warna jadi hijau
+   - Port default: 3306
+
+> **✅ Berhasil**: Jika Apache dan MySQL berwarna hijau, services sudah running!
+
+> **⚠️ Troubleshooting Port Conflict**:
+> - **Port 80 conflict** (Apache): Biasanya karena Skype/IIS. Stop service tersebut atau ubah port Apache.
+> - **Port 3306 conflict** (MySQL): Biasanya karena MySQL service lain. Stop di Services.msc.
 
 ---
 
 #### **Step 2: Copy Project ke htdocs**
 
-1. Buka folder: `C:\xampp\htdocs`
-2. Copy folder project `UTSSMT3` ke dalam htdocs
-3. Struktur akhir: `C:\xampp\htdocs\UTSSMT3\`
+1. **Buka File Explorer**
+   - Navigate ke: `C:\xampp\htdocs`
+   - Ini adalah folder root untuk semua project web XAMPP
+
+2. **Copy Project**
+   - Copy seluruh folder `UTSSMT3` dari lokasi Anda
+   - Paste ke dalam `C:\xampp\htdocs\`
+   - Struktur akhir: `C:\xampp\htdocs\UTSSMT3\`
+
+3. **Verifikasi Struktur**
+   ```
+   C:\xampp\htdocs\UTSSMT3\
+   ├── config.php
+   ├── database.sql
+   ├── index.php
+   ├── login.php
+   ├── register.php
+   ├── admin\
+   │   ├── dashboard.php
+   │   └── ...
+   └── ...
+   ```
 
 ---
 
-#### **Step 3: Import Database**
+#### **Step 3: Update Config untuk XAMPP**
+
+**PENTING**: Config default untuk Docker, harus diubah untuk XAMPP!
+
+1. **Buka file `config.php`**
+   - Lokasi: `C:\xampp\htdocs\UTSSMT3\config.php`
+   - Buka dengan text editor (Notepad++, VS Code, atau Notepad)
+
+2. **Cari baris ini** (sekitar baris 20-33):
+   ```php
+   define('DB_HOST', getenv('DB_HOST') ?: 'mysql');
+   define('DB_USER', getenv('DB_USER') ?: 'root');
+   define('DB_PASS', getenv('DB_PASS') ?: 'root');
+   define('DB_NAME', getenv('DB_NAME') ?: 'elitecar_db');
+   ```
+
+3. **Ubah menjadi** (untuk XAMPP):
+   ```php
+   define('DB_HOST', 'localhost');  // Ubah dari 'mysql' ke 'localhost'
+   define('DB_USER', 'root');       // Username default XAMPP
+   define('DB_PASS', '');           // Password kosong (default XAMPP)
+   define('DB_NAME', 'elitecar_db');
+   ```
+
+4. **Save file** (Ctrl + S)
+
+> **💡 Penjelasan**:
+> - `DB_HOST`: Docker pakai 'mysql' (nama container), XAMPP pakai 'localhost'
+> - `DB_PASS`: Docker pakai 'root', XAMPP default kosong ('')
+> - Jika Anda sudah set password MySQL di XAMPP, isi dengan password Anda
+
+---
+
+#### **Step 4: Import Database**
 
 1. **Buka phpMyAdmin**
+   - Pastikan Apache dan MySQL sudah running (hijau)
+   - Buka browser (Chrome/Firefox/Edge)
    - URL: http://localhost/phpmyadmin
-   - Login: username `root`, password kosong (atau `root`)
+   - Login otomatis (username: `root`, password: kosong)
 
-2. **Import Database**
+2. **Buat Database** (jika belum ada)
+   - Klik tab **"Databases"** di menu atas
+   - Di kolom "Create database", ketik: `elitecar_db`
+   - Collation: pilih `utf8mb4_general_ci`
+   - Klik **"Create"**
+
+3. **Import Database**
+   - Klik database **"elitecar_db"** di sidebar kiri
    - Klik tab **"Import"** di menu atas
-   - Klik **"Choose File"**
+   - Klik tombol **"Choose File"**
    - Pilih file: `C:\xampp\htdocs\UTSSMT3\database.sql`
-   - Scroll ke bawah, klik **"Go"**
+   - Scroll ke bawah
+   - Klik tombol **"Go"** di kanan bawah
+   - Tunggu sampai muncul pesan: "Import has been successfully finished"
 
-3. **Verifikasi**
-   - Klik **"elitecar_db"** di sidebar kiri
-   - Pastikan ada 3 tabel: `users`, `cars`, `bookings`
+4. **Verifikasi Import**
+   - Klik database **"elitecar_db"** di sidebar kiri
+   - Pastikan ada **3 tabel**:
+     - ✅ `users` (1 row - admin)
+     - ✅ `cars` (12 rows - mobil)
+     - ✅ `bookings` (0 rows - kosong)
+
+> **⚠️ Error saat Import?**
+> - Pastikan file `database.sql` tidak corrupt
+> - Cek max file size di phpMyAdmin (default 2MB)
+> - Jika file terlalu besar, import via MySQL command line
 
 ---
 
-#### **Step 4: Update Config (Jika Perlu)**
+#### **Step 5: Akses Aplikasi di Browser** 🌐
 
-Buka file `config.php` dan pastikan settingan ini:
+Buka browser favorit Anda dan akses:
 
-```php
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');           // Kosongkan jika tidak ada password
-define('DB_NAME', 'elitecar_db');
+| Halaman | URL | Keterangan |
+|---------|-----|------------|
+| **🏠 Homepage** | http://localhost/UTSSMT3/index.php | Halaman utama dengan katalog mobil |
+| **🔐 Login** | http://localhost/UTSSMT3/login.php | Login sebagai admin atau customer |
+| **📝 Register** | http://localhost/UTSSMT3/register.php | Register sebagai customer |
+| **📊 phpMyAdmin** | http://localhost/phpmyadmin | Kelola database |
+
+---
+
+#### **Step 6: Login sebagai Admin**
+
+1. **Buka halaman login**
+   - URL: http://localhost/UTSSMT3/login.php
+
+2. **Masukkan kredensial admin default**:
+   ```
+   Username: admin
+   Password: password
+   ```
+
+3. **Klik "Masuk"**
+   - Jika berhasil, akan redirect ke homepage
+   - Di navigation bar, akan muncul username "admin"
+
+4. **Akses Admin Panel**
+   - Klik link "Admin Panel" di navigation (jika ada)
+   - Atau langsung ke: http://localhost/UTSSMT3/admin/dashboard.php
+   - Dashboard akan menampilkan statistik (users, mobil, booking, revenue)
+
+> **📝 Penting**: Password adalah `password` (bukan `password123`)
+
+---
+
+#### **Step 7: Buat Admin Baru (Opsional)**
+
+Jika ingin menambah admin baru (maksimal 3 admin):
+
+**Metode 1: Via phpMyAdmin (Paling Mudah)**
+1. Buka: http://localhost/phpmyadmin
+2. Pilih database `elitecar_db`
+3. Klik tab "SQL"
+4. Paste query ini:
+```sql
+INSERT INTO users (username, email, password, full_name, phone, role) 
+VALUES (
+  'admin2',
+  'admin2@elitecar.id',
+  '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+  'Admin Kedua',
+  '+628111111111',
+  'admin'
+);
+```
+5. Klik "Go"
+6. Login dengan username: `admin2`, password: `password`
+
+**Metode 2: Via MySQL Command Line**
+1. Buka Command Prompt
+2. Navigate ke: `cd C:\xampp\mysql\bin`
+3. Login: `mysql -u root -p` (tekan Enter jika password kosong)
+4. Jalankan:
+```sql
+USE elitecar_db;
+INSERT INTO users (username, email, password, full_name, phone, role) 
+VALUES ('admin2', 'admin2@elitecar.id', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin Kedua', '+628111111111', 'admin');
+EXIT;
 ```
 
+> **⚠️ PENTING**: Maksimal hanya **3 admin**. Lihat section "User Roles & Admin Management" untuk detail lengkap.
+
 ---
 
-#### **Step 5: Akses Aplikasi**
+#### **Step 8: Test Registrasi Customer**
 
-Buka browser dan akses:
+1. **Buka halaman register**
+   - URL: http://localhost/UTSSMT3/register.php
 
-| Halaman | URL |
-|---------|-----|
-| **Homepage** | http://localhost/UTSSMT3/index.php |
-| **Login** | http://localhost/UTSSMT3/login.php |
+2. **Isi form registrasi**:
+   - Nama Lengkap: (nama Anda)
+   - Username: (username unik)
+   - Email: (email valid)
+   - No. Telepon: (nomor telepon)
+   - Password: (password Anda)
+   - Konfirmasi Password: (sama dengan password)
 
-**Login Admin:**
-- Username: `admin`
-- Password: `password`
+3. **Klik "Daftar"**
+   - Jika berhasil, akan auto-login dan redirect ke homepage
+   - User baru otomatis mendapat role **'customer'**
+   - Customer **TIDAK BISA** akses admin panel
 
 ---
 
@@ -332,7 +488,53 @@ Buka browser dan akses:
 
 Di XAMPP Control Panel:
 1. Klik **"Stop"** pada Apache
+   - Tunggu sampai status berubah jadi tidak berwarna
 2. Klik **"Stop"** pada MySQL
+   - Tunggu sampai status berubah jadi tidak berwarna
+
+> **💾 Data Aman**: Database tetap tersimpan di `C:\xampp\mysql\data\`. Saat start MySQL lagi, data masih ada.
+
+---
+
+### **🔄 Menjalankan Ulang (Hari Berikutnya)**
+
+Untuk menjalankan aplikasi lagi:
+
+1. **Buka XAMPP Control Panel**
+2. **Start Apache** (klik "Start")
+3. **Start MySQL** (klik "Start")
+4. **Akses**: http://localhost/UTSSMT3/index.php
+
+> **⚡ Cepat**: Hanya butuh ~10 detik untuk start services!
+
+---
+
+### **🗑️ Reset Database (Jika Perlu)**
+
+Jika ingin reset database ke kondisi awal:
+
+**Via phpMyAdmin:**
+1. Buka: http://localhost/phpmyadmin
+2. Pilih database `elitecar_db`
+3. Klik tab "Operations"
+4. Scroll ke bawah, klik "Drop the database (DROP)"
+5. Konfirmasi
+6. Buat database baru `elitecar_db`
+7. Import ulang `database.sql`
+
+**Via MySQL Command Line:**
+```bash
+cd C:\xampp\mysql\bin
+mysql -u root -p
+DROP DATABASE elitecar_db;
+CREATE DATABASE elitecar_db;
+USE elitecar_db;
+SOURCE C:/xampp/htdocs/UTSSMT3/database.sql;
+EXIT;
+```
+
+> **⚠️ Warning**: Semua data booking/mobil yang Anda tambahkan akan hilang!
+
 
 ---
 
@@ -365,6 +567,19 @@ docker exec -i elitecar_mysql mysql -uroot -proot elitecar_db < database.sql
 ```
 # A: Password admin adalah: password
 # Jika masih tidak bisa, reset database dengan: docker-compose down -v
+```
+
+**Q: Link Login/Register tidak berfungsi (tidak redirect ke halaman login/register)**
+```
+A: Ini masalah browser cache yang menyimpan versi lama app.js
+Solusi:
+1. Hard refresh browser: Ctrl + Shift + R (Windows) atau Cmd + Shift + R (Mac)
+2. Atau clear browser cache:
+   - Chrome: Ctrl + Shift + Delete → Clear browsing data
+   - Firefox: Ctrl + Shift + Delete → Clear recent history
+3. Aplikasi sudah menggunakan cache-busting (app.js?v=timestamp) untuk mencegah masalah ini
+
+Catatan: File index.php sudah diupdate dengan cache-busting parameter
 ```
 
 ---
@@ -413,6 +628,203 @@ Jika masih ada masalah:
 - ✅ Session management yang aman
 - ✅ Logout functionality
 - ✅ Password hashing (bcrypt)
+- ✅ Role-based access control (Customer vs Admin)
+
+### 👥 **User Roles & Admin Management**
+
+Sistem ini memiliki **2 jenis user** dengan akses yang berbeda:
+
+#### **🛒 Customer/Pelanggan**
+- **Cara Registrasi**: Via form `register.php` di website
+- **Limit**: ♾️ **UNLIMITED** (tidak ada batasan)
+- **Akses**: Homepage, katalog mobil, booking
+- **Tidak bisa**: Akses admin panel
+
+**Cara Register sebagai Customer:**
+1. Buka: http://localhost:8000/register.php
+2. Isi form registrasi (nama, username, email, password, dll)
+3. Klik "Daftar"
+4. Otomatis login sebagai **customer**
+
+#### **👨‍💼 Admin/Pemilik**
+- **Cara Registrasi**: ❌ **TIDAK bisa via form** - Harus dibuat manual di database
+- **Limit**: 🔒 **Maksimal 3 admin**
+- **Akses**: Admin panel (dashboard, kelola mobil, booking, laporan) + semua fitur customer
+- **Keamanan**: Hanya database admin/IT yang bisa membuat admin baru
+
+**Cara Membuat Admin Baru:**
+
+**Metode 1: Via Docker Command (Jika Pakai Docker)**
+```bash
+# Buka terminal di folder project
+docker exec -i elitecar_mysql mysql -uroot -proot -e "
+USE elitecar_db;
+INSERT INTO users (username, email, password, full_name, phone, role) 
+VALUES (
+  'admin_baru',
+  'admin_baru@elitecar.id',
+  '\$2y\$10\$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+  'Admin Baru',
+  '+628123456789',
+  'admin'
+);
+"
+```
+
+**Metode 2: Via MySQL Command Line XAMPP**
+
+**Step 1: Buka Command Prompt**
+```bash
+# Buka CMD atau PowerShell
+# Navigate ke folder MySQL XAMPP
+cd C:\xampp\mysql\bin
+```
+
+**Step 2: Login ke MySQL**
+```bash
+# Login sebagai root (password biasanya kosong di XAMPP)
+mysql -u root -p
+# Tekan Enter saat diminta password (jika password kosong)
+# Atau ketik password jika sudah di-set
+```
+
+**Step 3: Pilih Database**
+```sql
+USE elitecar_db;
+```
+
+**Step 4: Insert Admin Baru**
+```sql
+INSERT INTO users (username, email, password, full_name, phone, role) 
+VALUES (
+  'admin_baru',
+  'admin_baru@elitecar.id',
+  '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+  'Admin Baru',
+  '+628123456789',
+  'admin'
+);
+```
+
+**Step 5: Verifikasi**
+```sql
+SELECT id, username, email, full_name, role FROM users WHERE role = 'admin';
+```
+
+**Step 6: Keluar dari MySQL**
+```sql
+EXIT;
+```
+
+**Metode 3: Via phpMyAdmin (XAMPP atau Docker)**
+
+**Untuk XAMPP:**
+1. Pastikan Apache dan MySQL sudah running di XAMPP Control Panel
+2. Buka: http://localhost/phpmyadmin
+3. Login: username `root`, password kosong (atau password yang Anda set)
+4. Pilih database `elitecar_db` di sidebar kiri
+5. Klik tab **"SQL"** di menu atas
+6. Paste query ini:
+```sql
+INSERT INTO users (username, email, password, full_name, phone, role) 
+VALUES (
+  'admin_baru',
+  'admin_baru@elitecar.id',
+  '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+  'Admin Baru',
+  '+628123456789',
+  'admin'
+);
+```
+7. Klik tombol **"Go"** di kanan bawah
+8. Jika berhasil, akan muncul pesan: "1 row inserted"
+
+**Untuk Docker:**
+1. Buka: http://localhost:8080
+2. Login: username `root`, password `root`
+3. Ikuti langkah 4-8 di atas
+
+**Password Default**: `password` (sudah di-hash dengan bcrypt)
+
+**⚠️ PENTING:**
+- Maksimal hanya **3 admin** yang bisa dibuat
+- Jika sudah ada 3 admin, hapus salah satu dulu sebelum menambah admin baru
+- Admin **TIDAK BISA** dibuat via form register (hanya customer yang bisa)
+
+**Cek Jumlah Admin Saat Ini:**
+
+**Via Docker:**
+```bash
+docker exec -i elitecar_mysql mysql -uroot -proot -e "
+USE elitecar_db;
+SELECT COUNT(*) as total_admin FROM users WHERE role = 'admin';
+"
+```
+
+**Via XAMPP (MySQL Command Line):**
+```bash
+# Di folder C:\xampp\mysql\bin
+mysql -u root -p
+USE elitecar_db;
+SELECT COUNT(*) as total_admin FROM users WHERE role = 'admin';
+EXIT;
+```
+
+**Via phpMyAdmin (XAMPP atau Docker):**
+1. Buka phpMyAdmin
+2. Pilih database `elitecar_db`
+3. Klik tab "SQL"
+4. Paste query:
+```sql
+SELECT COUNT(*) as total_admin FROM users WHERE role = 'admin';
+```
+5. Klik "Go"
+
+**Lihat Daftar Admin:**
+
+**Via Docker:**
+```bash
+docker exec -i elitecar_mysql mysql -uroot -proot -e "
+USE elitecar_db;
+SELECT id, username, email, full_name, role FROM users WHERE role = 'admin';
+"
+```
+
+**Via XAMPP (MySQL Command Line):**
+```bash
+mysql -u root -p
+USE elitecar_db;
+SELECT id, username, email, full_name, role FROM users WHERE role = 'admin';
+EXIT;
+```
+
+**Via phpMyAdmin:**
+1. Buka phpMyAdmin
+2. Pilih database `elitecar_db`
+3. Klik tabel `users`
+4. Klik tab "Browse"
+5. Cari user dengan role = 'admin'
+
+
+#### **📊 Perbandingan Customer vs Admin**
+
+| Aspek | Customer | Admin |
+|-------|----------|-------|
+| **Cara Daftar** | Form `register.php` | Manual di database |
+| **Limit** | Unlimited | Maksimal 3 |
+| **Akses Homepage** | ✅ Ya | ✅ Ya |
+| **Akses Admin Panel** | ❌ Tidak | ✅ Ya |
+| **Kelola Mobil** | ❌ Tidak | ✅ Ya |
+| **Kelola Booking** | ❌ Tidak | ✅ Ya |
+| **Lihat Laporan** | ❌ Tidak | ✅ Ya |
+| **Buat Booking** | ✅ Ya | ✅ Ya |
+
+#### **🔒 Keamanan Role System**
+- ✅ Customer yang coba akses admin panel akan di-redirect ke homepage
+- ✅ Pesan error: "Akses ditolak! Anda tidak memiliki izin untuk mengakses halaman admin."
+- ✅ Role disimpan di session dan database
+- ✅ Validasi role di setiap halaman admin menggunakan `requireAdmin()`
+
 
 ### 👤 **User Side (Customer)**
 - ✅ Katalog mobil dengan filter (SUV, Sedan, Van)
@@ -500,17 +912,23 @@ Project ini dilengkapi dengan **komentar lengkap di source code** untuk membantu
 - ✅ **`styles.css`** - CSS variables, responsive design, modern UI patterns
 
 #### **Dokumentasi:**
+- ✅ **`README.md`** - Panduan utama (file ini)
+- ✅ **`ADMIN-GUIDE.md`** - Panduan lengkap admin management & role system
 - ✅ **`CODE-GUIDE.md`** - Panduan lengkap memahami source code
 - ✅ **`DOCKER.md`** - Penjelasan Docker setup dan troubleshooting
 - ✅ **`DOCKER-QUICKSTART.md`** - Quick start guide untuk Docker
+- ✅ **`CHANGELOG-ROLE-SYSTEM.md`** - Changelog implementasi role system
+
 
 ### **Konsep yang Dijelaskan:**
 - 🔹 **Database**: Prepared statements, JOIN, aggregate functions (COUNT, SUM)
-- 🔹 **Security**: Password hashing (bcrypt), SQL injection prevention, XSS protection
+- 🔹 **Security**: Password hashing (bcrypt), SQL injection prevention, XSS protection, RBAC
+- 🔹 **RBAC**: Role-Based Access Control (customer vs admin), admin limit, proteksi halaman
 - 🔹 **PHP**: Session management, form handling, file upload, DateTime operations
 - 🔹 **JavaScript**: Async/await, fetch API, event listeners, DOM manipulation
 - 🔹 **CSS**: Flexbox, Grid, responsive design, CSS variables
 - 🔹 **Docker**: Containerization, docker-compose, volume management
+
 
 > **💡 Tip**: Buka file-file di atas dan baca komentar yang ada untuk memahami setiap bagian kode!
 
@@ -529,8 +947,13 @@ Menyimpan data user/customer yang terdaftar
 | password | VARCHAR(255) | Password (hashed) |
 | full_name | VARCHAR(100) | Nama lengkap |
 | phone | VARCHAR(20) | Nomor telepon |
+| role | ENUM('customer', 'admin') | Role user (default: 'customer') |
 | created_at | TIMESTAMP | Waktu registrasi |
 | updated_at | TIMESTAMP | Waktu update terakhir |
+
+**Catatan:**
+- `role` = 'customer' untuk user yang register via form
+- `role` = 'admin' untuk pemilik/administrator (dibuat manual, maksimal 3)
 
 ### **Table: cars**
 Menyimpan data mobil yang tersedia untuk disewa

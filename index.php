@@ -266,6 +266,6 @@ $jsonLdProducts = json_encode($cars);
         </div>
     </footer>
 
-    <script src="app.js"></script>
+    <script src="app.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

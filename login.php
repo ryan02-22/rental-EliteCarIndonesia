@@ -2,9 +2,15 @@
 // ============================================================================
 // 📚 HALAMAN LOGIN - EliteCar Indonesia
 // ============================================================================
-// File ini menangani proses login user
-// Flow: Form → Validasi → Query Database → Verify Password → Set Session → Redirect
+// File ini menangani proses login user (Customer & Admin)
+// 
+// SISTEM ROLE:
+// - Customer: Login → Homepage (tidak ada akses admin panel)
+// - Admin: Login → Dashboard Admin (akses penuh ke admin panel)
+// 
+// Flow: Form → Validasi → Query Database → Verify Password → Set Session (+ Role) → Redirect
 // ============================================================================
+
 
 // ============================================================================
 // STEP 1: LOAD CONFIGURATION
@@ -28,6 +34,32 @@ if (isLoggedIn()) {
 // ============================================================================
 $error = '';    // Variable untuk simpan pesan error
 $success = '';  // Variable untuk simpan pesan sukses
+$info = '';     // Variable untuk simpan pesan info
+
+// Cek apakah ada pesan error dari session (misal dari redirect register.php)
+if (isset($_SESSION['error'])) {
+    $error = $_SESSION['error'];
+    unset($_SESSION['error']);  // Hapus setelah ditampilkan
+}
+
+// Cek apakah ada pesan custom dari halaman lain (misal dari booking_process.php)
+if (isset($_SESSION['login_message']) && !empty($_SESSION['login_message'])) {
+    $info = $_SESSION['login_message'];
+    unset($_SESSION['login_message']);  // Hapus setelah ditampilkan
+    
+} elseif (isset($_SESSION['redirect_after_login']) && !empty($_SESSION['redirect_after_login'])) {
+    // Fallback: Jika tidak ada pesan custom, tentukan berdasarkan URL tujuan
+    $redirect_url = $_SESSION['redirect_after_login'];
+    
+    // Tentukan pesan berdasarkan URL tujuan
+    if (strpos($redirect_url, 'booking') !== false) {
+        $info = '🔒 Silakan login terlebih dahulu untuk melakukan reservasi.';
+    } elseif (strpos($redirect_url, 'admin') !== false) {
+        $info = '🔒 Silakan login sebagai admin untuk mengakses halaman ini.';
+    } else {
+        $info = '🔒 Silakan login terlebih dahulu untuk melanjutkan.';
+    }
+}
 
 // ============================================================================
 // STEP 4: HANDLE FORM SUBMISSION
@@ -134,6 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // STEP 4.7: SET SESSION (LOGIN SUCCESS)
                 // ============================================================
                 /**
+                 * SET SESSION VARIABLES
                  * $_SESSION = superglobal array untuk simpan data user
                  * Data di $_SESSION tersimpan selama browser terbuka
                  * Setiap user punya session berbeda
@@ -142,18 +175,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['full_name'] = $user['full_name'];
-                $_SESSION['user_role'] = $user['role'] ?? 'customer';  // Simpan role untuk RBAC
+                
+                /**
+                 * SIMPAN ROLE UNTUK RBAC (Role-Based Access Control)
+                 * 
+                 * Role menentukan akses user:
+                 * - 'customer' = User biasa (register via form)
+                 *   → Akses: Homepage, katalog, booking
+                 *   → Tidak bisa: Akses admin panel
+                 * 
+                 * - 'admin' = Pemilik/administrator (maksimal 3, dibuat manual)
+                 *   → Akses: Admin panel (dashboard, kelola mobil, booking, laporan)
+                 *   → Plus: Semua akses customer
+                 * 
+                 * ?? 'customer' = null coalescing operator
+                 * Jika $user['role'] null/tidak ada, default ke 'customer'
+                 */
+                $_SESSION['user_role'] = $user['role'] ?? 'customer';
                 
                 // ============================================================
-                // STEP 4.8: REDIRECT KE HALAMAN UTAMA
+                // STEP 4.8: REDIRECT KE HALAMAN TUJUAN
                 // ============================================================
                 /**
-                 * header("Location: ...") = redirect user ke URL lain
-                 * Harus dipanggil SEBELUM ada output HTML
-                 * exit() = stop program (code setelah ini tidak jalan)
+                 * REDIRECT BACK AFTER LOGIN
+                 * 
+                 * Cek apakah ada URL tujuan yang disimpan di session
+                 * (dari requireLogin() saat user coba akses halaman yang butuh login)
+                 * 
+                 * Contoh skenario:
+                 * 1. User (belum login) klik "Reservasi Sekarang"
+                 * 2. booking_process.php panggil requireLogin()
+                 * 3. requireLogin() simpan URL tujuan: /booking_process.php
+                 * 4. Redirect ke login.php
+                 * 5. User login berhasil
+                 * 6. Redirect kembali ke /booking_process.php (bukan index.php)
+                 * 
+                 * Jika tidak ada URL tujuan → redirect ke index.php (homepage)
                  */
-                header("Location: index.php");
-                exit();
+                
+                // Cek apakah ada URL tujuan yang disimpan
+                if (isset($_SESSION['redirect_after_login']) && !empty($_SESSION['redirect_after_login'])) {
+                    // Ambil URL tujuan
+                    $redirect_url = $_SESSION['redirect_after_login'];
+                    
+                    // Hapus dari session (sudah tidak diperlukan lagi)
+                    unset($_SESSION['redirect_after_login']);
+                    
+                    // Redirect ke URL tujuan
+                    header("Location: $redirect_url");
+                    exit();
+                    
+                } else {
+                    // Tidak ada URL tujuan, redirect ke homepage
+                    header("Location: index.php");
+                    exit();
+                }
                 
             } else {
                 // Password SALAH
@@ -218,6 +294,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php if ($success): ?>
             <div class="alert alert-success">
                 <?php echo htmlspecialchars($success); ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($info): ?>
+            <div class="alert alert-info">
+                <?php echo htmlspecialchars($info); ?>
             </div>
         <?php endif; ?>
 
