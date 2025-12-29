@@ -9,6 +9,6 @@
         <li><a href="bookings.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'bookings.php' ? 'active' : ''; ?>">📋 Booking</a></li>
         <li><a href="reports.php" class="<?php echo basename($_SERVER['PHP_SELF']) == 'reports.php' ? 'active' : ''; ?>">📈 Laporan</a></li>
         <li><a href="../index.php">🏠 Ke Website</a></li>
-        <li><a href="../logout.php" style="color: #ef4444;">🚪 Logout</a></li>
+        <li><a href="../logout.php" style="color: #ef4444;" onclick="return confirm('Apakah Anda yakin ingin logout?');">🚪 Logout</a></li>
     </ul>
 </nav>

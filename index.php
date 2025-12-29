@@ -162,7 +162,7 @@ $jsonLdProducts = json_encode($cars);
                     </li>
                     <?php endif; ?>
                     <li class="nav-item">
-                        <a href="logout.php" class="nav-link login-btn">Logout</a>
+                        <a href="logout.php" class="nav-link login-btn" onclick="return confirm('Apakah Anda yakin ingin logout?');">Logout</a>
                     </li>
                 <?php else: ?>
                     <li class="nav-item">
@@ -254,12 +254,12 @@ $jsonLdProducts = json_encode($cars);
                 <button type="submit" class="primary-btn">Reservasi Sekarang</button>
                 <div id="formSuccess" class="success" role="status" aria-live="polite"></div>
                 <div class="contact-help">
-                    <a class="wa-link" href="https://wa.me/6282328649895?text=Halo%20EliteCar%20Indonesia,%20saya%20ingin%20info%20sewa%20mobil." target="_blank" rel="noopener" aria-label="Chat WhatsApp EliteCar Indonesia">
+                    <a class="wa-button" href="https://wa.me/6282328649895?text=Halo%20EliteCar%20Indonesia,%20saya%20ingin%20info%20sewa%20mobil." target="_blank" rel="noopener" aria-label="Chat WhatsApp EliteCar Indonesia">
                         <span class="wa-icon" aria-hidden="true">
                             <!-- WhatsApp glyph -->
                             <svg viewBox="0 0 32 32" width="16" height="16" fill="currentColor"><path d="M19.11 17.59c-.28-.14-1.63-.8-1.88-.89-.25-.09-.43-.14-.62.14-.18.28-.71.89-.87 1.07-.16.18-.32.2-.6.07-.28-.14-1.18-.43-2.25-1.38-.83-.74-1.39-1.66-1.56-1.94-.16-.28-.02-.43.12-.57.12-.12.28-.32.41-.48.14-.16.18-.28.28-.46.09-.18.05-.34-.02-.48-.07-.14-.62-1.49-.85-2.04-.22-.53-.45-.46-.62-.46h-.53c-.18 0-.48.07-.73.34-.25.28-.96.93-.96 2.28s.99 2.65 1.13 2.83c.14.18 1.96 2.99 4.75 4.18.66.28 1.18.45 1.58.57.66.21 1.26.18 1.74.11.53-.08 1.63-.66 1.86-1.3.23-.64.23-1.19.16-1.3-.07-.11-.25-.18-.53-.32z"/><path d="M26.66 5.34C23.74 2.43 19.99 1 16 1 8.27 1 2 7.27 2 15c0 2.46.64 4.86 1.86 7L2 31l9.2-1.82C13.26 29.36 14.62 29.7 16 29.7c7.73 0 14-6.27 14-14 0-3.98-1.43-7.74-3.34-10.66zM16 27.5c-1.22 0-2.43-.25-3.54-.72l-.25-.11-5.46 1.08 1.12-5.33-.12-.27C6.28 20 6 17.51 6 15 6 8.4 11.4 3 18 3c3.03 0 5.88 1.18 8.02 3.32C28.16 8.45 29.3 11.3 29.3 14.3 29 21 23.6 26.5 16 26.5z"/></svg>
                         </span>
-                        Butuh bantuan? Chat WhatsApp
+                        <span class="wa-text">Butuh bantuan? Chat via WhatsApp</span>
                     </a>
                 </div>
             </form>
