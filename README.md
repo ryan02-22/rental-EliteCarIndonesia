@@ -36,6 +36,20 @@
 
 ---
 
+## 🎨 Tech Stack
+
+| Category | Technology |
+|----------|------------|
+| **Backend** | PHP 8.2 Native |
+| **Database** | MySQL 8.0 |
+| **Frontend** | HTML5, CSS3, Vanilla JavaScript |
+| **Container** | Docker + Docker Compose |
+| **Web Server** | Apache 2.4 |
+| **Design** | Modern gradient UI, Responsive layout |
+| **Security** | Password hashing, Prepared statements, Session management |
+
+---
+
 ## 🚀 Cara Menjalankan Aplikasi
 
 > **💡 Pilih salah satu metode di bawah ini. Metode Docker lebih mudah dan sangat direkomendasikan!**
