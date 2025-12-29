@@ -62,7 +62,7 @@ try {
         // If not JSON, keep as string (single image)
         
         $cars[] = [
-            'id' => (int)$row['id'], // Use raw integer ID for backend compatibility
+            'id' => (int)$row['id'], // Gunakan raw integer ID untuk sinkronisasi dengan database dan frontend logic
             'name' => $row['name'],
             'type' => $row['type'],
             'pricePerDay' => (int)$row['price_per_day'],

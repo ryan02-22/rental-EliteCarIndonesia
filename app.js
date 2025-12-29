@@ -7,7 +7,8 @@ const API_BASE_URL = '/api';
 const CARS_ENDPOINT = `${API_BASE_URL}/cars.php`;
 const BOOKINGS_ENDPOINT = `${API_BASE_URL}/bookings.php`;
 
-// Fallback data mobil (jika API tidak tersedia)
+// Fallback data mobil (Digunakan jika API tidak dapat dijangkau)
+// ID menggunakan format integer murni untuk sinkronisasi dengan database
 const FALLBACK_CARS = [
   { id: 1, name: 'Toyota Fortuner', type: 'SUV', pricePerDay: 850000, image: ['fortuner-1.jpg', 'fortuner-2.jpg', 'fortuner-3.jpg'] },
   { id: 2, name: 'Honda CR-V', type: 'SUV', pricePerDay: 800000, image: ['crv1.webp', 'crv2.webp', 'crv3.webp', 'crv4.webp', 'crv5.webp', 'crv6.jpg'] },
@@ -264,8 +265,8 @@ function setupBookingForm() {
 
   if (confirmReserve) {
     confirmReserve.addEventListener('click', function () {
-      // Programmatically submit the form using prototype to bypass any overrides
-      // This is the most reliable way to ensure data is sent
+      // Programmatik submit form menggunakan prototype Call untuk menjamin orisinalitas event.
+      // Ini memastikan data terkirim meskipun ada interference dari script lain.
       if (bookingForm) {
         HTMLFormElement.prototype.submit.call(bookingForm);
       }
@@ -286,6 +287,8 @@ function setupBookingForm() {
  */
 function getSelectedCar() {
   const id = carSelect.value;
+  // Menggunakan loose equality (atau eksplisit string conversion) untuk memastikan 
+  // ID dari DOM (string) cocok dengan ID dari data (integer).
   return cars.find(c => String(c.id) === String(id)) || null;
 }
 

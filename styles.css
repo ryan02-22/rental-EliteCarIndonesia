@@ -879,7 +879,12 @@ img {
   }
 }
 
-/* Logout Modal Styles */
+/* ============================================================================
+   Sistem Modal Global - Desain Premium (Glassmorphism)
+   ----------------------------------------------------------------------------
+   Digunakan untuk Logout, Konfirmasi Reservasi, dan Notifikasi Penting.
+   Fitur: Backdrop Blur, Animasi Bounce, dan Layout Responsif.
+   ============================================================================ */
 /* Global Modal Styles - Premium Design */
 .modal {
   position: fixed;

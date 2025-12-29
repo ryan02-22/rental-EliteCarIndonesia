@@ -107,12 +107,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' || $restored_from_session) {
             $debug_info = ' (Data di-restore dari session setelah login)';
         }
         
+        // Jika validasi gagal, kembalikan pesan error.
         $error = 'Semua field wajib diisi!' . $debug_info;
         
-        // Tambahan info untuk debugging (hapus di production)
-        if ($restored_from_session) {
-            $error .= '<br><small>Debug: car_id=' . $car_id . ', name=' . ($renter_name ?: 'kosong') . ', email=' . ($renter_email ?: 'kosong') . ', start=' . ($start_date ?: 'kosong') . ', end=' . ($end_date ?: 'kosong') . '</small>';
-        }
+        // Catatan: Debug logic dihapus karena data car_id sudah ditangani secara defensif
+        // melalui sistem regex/preg_replace di atas.
         
     } else {
         // ====================================================================
