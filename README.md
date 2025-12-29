@@ -1263,3 +1263,38 @@ Project untuk keperluan akademik - UAS Pemrograman Web Semester 3
 **⭐ Made with ❤️ by EliteCar Indonesia Team**
 
 *Last Updated: 29 Desember 2025*
+
+---
+
+## 📂 Struktur Folder Project
+
+Berikut adalah struktur file dan folder dalam project ini agar mudah dipahami:
+
+```
+UTSSMT3/
+├── admin/                  # Panel Admin
+│   ├── dashboard.php       # Halaman utama admin
+│   ├── cars.php            # CRUD Mobil
+│   ├── bookings.php        # Manajemen Booking
+│   ├── admin.css           # Styling khusus admin
+│   └── ...
+├── api/                    # API Endpoints
+│   └── cars.php            # JSON API untuk data mobil
+├── images/                 # Aset gambar mobil & logo
+├── auth.php                # Halaman Login & Register (New)
+├── login.php               # Redirect ke auth.php (Legacy)
+├── register.php            # Redirect ke auth.php (Legacy)
+├── index.php               # Halaman Utama (Homepage)
+├── booking_process.php     # Prosedur penyimpanan booking
+├── config.php              # Koneksi Database & Helper Functions
+├── database.sql            # Skema Database & Data Awal
+├── style.css               # Styling Global
+├── app.js                  # Logic Frontend (Slider, Validasi)
+└── README.md               # Dokumentasi Lengkap
+```
+
+---
+
+<p align="center">
+  Built with ❤️ by <strong>Ryan & Team</strong> for UAS Semester 3
+</p>
