@@ -378,13 +378,21 @@ async function handleFormSubmit(e) {
     return;
   }
 
-  // Jika semua validasi lolos, biarkan form submit normal ke booking_process.php
-  // Form akan di-submit dengan method POST
-  // booking_process.php akan handle:
-  // - Cek login (jika belum, redirect ke login dengan simpan data di session)
-  // - Proses booking (jika sudah login)
+  // Jika semua validasi lolos, tampilkan modal konfirmasi
+  e.preventDefault();
 
-  // CATATAN: Code di bawah ini tidak akan dijalankan karena form sudah submit
+  const reserveModal = document.getElementById('reserve-modal');
+  if (reserveModal) {
+    reserveModal.classList.remove('hidden');
+  } else {
+    // Fallback jika modal tidak ditemukan (misal di halaman lain/error loading)
+    if (confirm('Apakah Anda yakin ingin melakukan reservasi?')) {
+      bookingForm.submit();
+    }
+  }
+
+  // CATATAN: Submit sesungguhnya akan di-trigger oleh tombol "Ya" di dalam modal
+  // yang menjalankan bookingForm.submit() (bypass listener ini)
   // Tapi kita biarkan untuk backward compatibility jika ada yang pakai AJAX
 }
 
