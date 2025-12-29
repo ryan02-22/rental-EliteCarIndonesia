@@ -341,11 +341,112 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </p>
         </div>
 
-        <div style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); padding: 12px; border-radius: 8px; margin-top: 20px; border: 2px solid #4f46e5;">
-            <p style="font-size: 13px; color: #ffffff; text-align: center; margin: 0; font-weight: 600;">
-                💻 Karya TI.24.CA.1
-            </p>
+        <!-- Enhanced Footer with Attractive Design -->
+        <div style="
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        ">
+            <!-- Animated Background Pattern -->
+            <div style="
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+                background-size: 20px 20px;
+                animation: movePattern 20s linear infinite;
+                pointer-events: none;
+            "></div>
+            
+            <!-- Content -->
+            <div style="position: relative; z-index: 1;">
+                <p style="
+                    font-size: 16px;
+                    color: #ffffff;
+                    text-align: center;
+                    margin: 0;
+                    font-weight: 600;
+                    letter-spacing: 0.5px;
+                    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                    flex-wrap: wrap;
+                ">
+                    <span style="
+                        display: inline-block;
+                        animation: pulse 2s ease-in-out infinite;
+                        font-size: 20px;
+                    ">⭐</span>
+                    <span>Made with</span>
+                    <span style="
+                        display: inline-block;
+                        animation: heartbeat 1.5s ease-in-out infinite;
+                        color: #ff6b9d;
+                        font-size: 20px;
+                    ">❤️</span>
+                    <span>by</span>
+                    <span style="
+                        background: linear-gradient(90deg, #fff, #ffd700, #fff);
+                        background-size: 200% auto;
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        background-clip: text;
+                        animation: shine 3s linear infinite;
+                        font-weight: 700;
+                    ">EliteCar Indonesia Team</span>
+                </p>
+            </div>
         </div>
+
+        <!-- CSS Animations -->
+        <style>
+            @keyframes pulse {
+                0%, 100% {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+                50% {
+                    transform: scale(1.2);
+                    opacity: 0.8;
+                }
+            }
+
+            @keyframes heartbeat {
+                0%, 100% {
+                    transform: scale(1);
+                }
+                10%, 30% {
+                    transform: scale(1.1);
+                }
+                20%, 40% {
+                    transform: scale(1.2);
+                }
+            }
+
+            @keyframes shine {
+                to {
+                    background-position: 200% center;
+                }
+            }
+
+            @keyframes movePattern {
+                0% {
+                    transform: translate(0, 0);
+                }
+                100% {
+                    transform: translate(20px, 20px);
+                }
+            }
+        </style>
     </div>
 </body>
 </html>
