@@ -162,7 +162,7 @@ $jsonLdProducts = json_encode($cars);
                     </li>
                     <?php endif; ?>
                     <li class="nav-item">
-                        <a href="logout.php" class="nav-link login-btn" onclick="return confirm('Apakah Anda yakin ingin logout?');">Logout</a>
+                        <a href="#" id="logout-link" class="nav-link login-btn">Logout</a>
                     </li>
                 <?php else: ?>
                     <li class="nav-item">
@@ -173,7 +173,48 @@ $jsonLdProducts = json_encode($cars);
                     </li>
                 <?php endif; ?>
                 </ul>
-            </nav>
+            <!-- Logout Confirmation Modal -->
+<div id="logout-modal" class="modal hidden">
+  <div class="modal-content">
+    <p>Apakah Anda yakin ingin logout?</p>
+    <button id="confirm-logout" class="primary-btn">Ya</button>
+    <button id="cancel-logout" class="secondary-btn">Batal</button>
+  </div>
+</div>
+<script>
+  document.getElementById('logout-link').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('logout-modal').classList.remove('hidden');
+  });
+  document.getElementById('confirm-logout').addEventListener('click', function() {
+    window.location.href = 'logout.php';
+  });
+  document.getElementById('cancel-logout').addEventListener('click', function() {
+    document.getElementById('logout-modal').classList.add('hidden');
+  });
+<!-- Reservation Confirmation Modal -->
+<div id="reserve-modal" class="modal hidden">
+  <div class="modal-content">
+    <p>Apakah Anda yakin ingin melakukan reservasi?</p>
+    <button id="confirm-reserve" class="primary-btn">Ya</button>
+    <button id="cancel-reserve" class="secondary-btn">Batal</button>
+  </div>
+</div>
+<script>
+  // existing logout listeners remain above
+  document.getElementById('reserve-link').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('reserve-modal').classList.remove('hidden');
+  });
+  document.getElementById('confirm-reserve').addEventListener('click', function() {
+    // navigate to booking section
+    window.location.hash = 'booking';
+    document.getElementById('reserve-modal').classList.add('hidden');
+  });
+  document.getElementById('cancel-reserve').addEventListener('click', function() {
+    document.getElementById('reserve-modal').classList.add('hidden');
+  });
+</script>
         </div>
         <nav class="filters" aria-label="Filter tipe mobil">
                 <button class="filter-btn active" data-filter="all" aria-pressed="true">Semua</button>
@@ -188,7 +229,7 @@ $jsonLdProducts = json_encode($cars);
             <div class="hero-content">
                 <h2>Sewa Mobil Premium untuk Perjalanan Tanpa Kompromi</h2>
                 <p>Armada terawat, proses cepat, dan layanan terpercaya. Pilih mobil favorit Anda dan lakukan reservasi dalam hitungan menit.</p>
-                <a href="#booking" class="primary-btn hero-cta">Reservasi Sekarang</a>
+                <a href="#" id="reserve-link" class="primary-btn hero-cta">Reservasi Sekarang</a>
             </div>
         </div>
     </section>
