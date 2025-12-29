@@ -164,15 +164,23 @@ Buka browser favorit Anda (Chrome/Firefox/Edge) dan akses:
 #### **Step 6: Login sebagai Admin**
 
 1. Buka: http://localhost:8000/login.php
-2. Masukkan kredensial:
-   ```
-   Username: admin
-   Password: password
-   ```
+2. Masukkan kredensial admin (lihat tabel di bawah)
 3. Klik **"Masuk"**
 4. Anda akan diarahkan ke **Dashboard Admin**
 
-> **📝 Penting**: Password adalah `password` (bukan `password123`)
+**Akun Admin yang Sudah Terdaftar:**
+
+| Username | Password | Nama Lengkap | Keterangan |
+|----------|----------|--------------|------------|
+| `admin` | `password` | Administrator EliteCar | Admin utama (default) |
+| `admin2` | `password` | Admin 2 | Admin kedua |
+| `admin3` | `password` | Admin 3 | Admin ketiga |
+
+> **📝 Catatan Penting**: 
+> - Password untuk semua admin adalah `password` (bukan `password123`)
+> - Maksimal hanya **3 admin** yang bisa terdaftar
+> - Untuk menambah admin baru, lihat section "User Roles & Admin Management"
+
 
 ---
 
@@ -406,22 +414,30 @@ Buka browser favorit Anda dan akses:
 1. **Buka halaman login**
    - URL: http://localhost/UTSSMT3/login.php
 
-2. **Masukkan kredensial admin default**:
-   ```
-   Username: admin
-   Password: password
-   ```
+2. **Masukkan kredensial admin** (lihat tabel di bawah)
+
+**Akun Admin yang Sudah Terdaftar:**
+
+| Username | Password | Nama Lengkap | Keterangan |
+|----------|----------|--------------|------------|
+| `admin` | `password` | Administrator EliteCar | Admin utama (default) |
+| `admin2` | `password` | Admin 2 | Admin kedua |
+| `admin3` | `password` | Admin 3 | Admin ketiga |
 
 3. **Klik "Masuk"**
    - Jika berhasil, akan redirect ke homepage
-   - Di navigation bar, akan muncul username "admin"
+   - Di navigation bar, akan muncul username admin yang login
 
 4. **Akses Admin Panel**
    - Klik link "Admin Panel" di navigation (jika ada)
    - Atau langsung ke: http://localhost/UTSSMT3/admin/dashboard.php
    - Dashboard akan menampilkan statistik (users, mobil, booking, revenue)
 
-> **📝 Penting**: Password adalah `password` (bukan `password123`)
+> **📝 Catatan Penting**: 
+> - Password untuk semua admin adalah `password` (bukan `password123`)
+> - Maksimal hanya **3 admin** yang bisa terdaftar
+> - Untuk menambah admin baru, lihat section "User Roles & Admin Management"
+
 
 ---
 
