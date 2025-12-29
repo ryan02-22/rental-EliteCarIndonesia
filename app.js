@@ -253,7 +253,31 @@ function setupBookingForm() {
   startDateEl.addEventListener('change', updatePricing);
   endDateEl.addEventListener('change', updatePricing);
 
-  bookingForm.addEventListener('submit', handleFormSubmit);
+  const reserveTrigger = document.getElementById('reserve-btn-trigger');
+  const confirmReserve = document.getElementById('confirm-reserve');
+  const cancelReserve = document.getElementById('cancel-reserve');
+  const reserveModal = document.getElementById('reserve-modal');
+
+  if (reserveTrigger) {
+    reserveTrigger.addEventListener('click', handleValidationAndModal);
+  }
+
+  if (confirmReserve) {
+    confirmReserve.addEventListener('click', function () {
+      // Programmatically submit the form using prototype to bypass any overrides
+      // This is the most reliable way to ensure data is sent
+      if (bookingForm) {
+        HTMLFormElement.prototype.submit.call(bookingForm);
+      }
+      if (reserveModal) reserveModal.classList.add('hidden');
+    });
+  }
+
+  if (cancelReserve) {
+    cancelReserve.addEventListener('click', function () {
+      if (reserveModal) reserveModal.classList.add('hidden');
+    });
+  }
 }
 
 /**
@@ -320,21 +344,9 @@ function populateCarSelect(list) {
 }
 
 /**
- * Handle form submission dengan validasi
- * 
- * PERUBAHAN PENTING:
- * - Form di-submit secara NORMAL ke booking_process.php (bukan AJAX)
- * - Ini memungkinkan:
- *   1. Login redirect jika user belum login
- *   2. Data form tersimpan di session
- *   3. Auto-restore setelah login
- * 
- * @param {Event} e - Submit event
+ * Validasi form dan tampilkan modal konfirmasi jika valid
  */
-async function handleFormSubmit(e) {
-  // JANGAN preventDefault! Biarkan form submit normal ke booking_process.php
-  // e.preventDefault(); // ← DIHAPUS
-
+function handleValidationAndModal() {
   // Reset error messages
   formSuccessEl.textContent = '';
   nameErrorEl.textContent = '';
@@ -345,55 +357,49 @@ async function handleFormSubmit(e) {
   const selected = getSelectedCar();
   const days = calculateDays(startDateEl.value, endDateEl.value);
 
-  // Validasi frontend (sebelum submit)
+  // Validasi frontend
   if (!name) {
-    e.preventDefault(); // Prevent submit jika validasi gagal
     nameErrorEl.textContent = 'Nama penyewa wajib diisi.';
     bookingForm.renterName.focus();
     return;
   }
 
   if (!email || !bookingForm.renterEmail.validity.valid) {
-    e.preventDefault(); // Prevent submit jika validasi gagal
+    const errorMsg = !email ? 'Email wajib diisi.' : 'Email tidak valid.';
+    nameErrorEl.textContent = ''; // clear other errors
+    const existingError = document.getElementById('emailError');
+    if (existingError) existingError.remove();
+
     const emailError = document.createElement('small');
     emailError.className = 'error';
     emailError.id = 'emailError';
-    emailError.textContent = 'Email tidak valid.';
+    emailError.textContent = errorMsg;
     renterEmailEl.parentElement.appendChild(emailError);
     renterEmailEl.focus();
     return;
   }
 
   if (!selected) {
-    e.preventDefault(); // Prevent submit jika validasi gagal
     alert('Silakan pilih mobil.');
     carSelect.focus();
     return;
   }
 
   if (days <= 0) {
-    e.preventDefault(); // Prevent submit jika validasi gagal
     dateErrorEl.textContent = 'Tanggal selesai harus setelah tanggal mulai.';
     endDateEl.focus();
     return;
   }
 
-  // Jika semua validasi lolos, tampilkan modal konfirmasi
-  e.preventDefault();
-
+  // Jika valid, tampilkan modal
   const reserveModal = document.getElementById('reserve-modal');
   if (reserveModal) {
     reserveModal.classList.remove('hidden');
   } else {
-    // Fallback jika modal tidak ditemukan (misal di halaman lain/error loading)
     if (confirm('Apakah Anda yakin ingin melakukan reservasi?')) {
       HTMLFormElement.prototype.submit.call(bookingForm);
     }
   }
-
-  // CATATAN: Submit sesungguhnya akan di-trigger oleh tombol "Ya" di dalam modal
-  // yang menjalankan bookingForm.submit() via index.php script
-  // Tapi index.php script juga harus diperbaiki untuk pakai prototype submit
 }
 
 // ============================================================================

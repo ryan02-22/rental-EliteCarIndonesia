@@ -192,6 +192,8 @@ $jsonLdProducts = json_encode($cars);
   document.getElementById('cancel-logout').addEventListener('click', function() {
     document.getElementById('logout-modal').classList.add('hidden');
   });
+</script>
+
 <!-- Reservation Confirmation Modal -->
 <div id="reserve-modal" class="modal hidden">
   <div class="modal-content">
@@ -200,26 +202,6 @@ $jsonLdProducts = json_encode($cars);
     <button id="cancel-reserve" class="secondary-btn">Batal</button>
   </div>
 </div>
-<script>
-  // existing logout listeners remain above
-  // Reservation Form Confirmation
-  document.addEventListener('DOMContentLoaded', function() {
-      const bookingForm = document.getElementById('bookingForm');
-      const reserveModal = document.getElementById('reserve-modal');
-
-      /* Listener form dipindahkan ke app.js untuk handle validasi */
-
-      document.getElementById('confirm-reserve').addEventListener('click', function() {
-        // Programmatically submit the form using prototype to bypass any overrides
-        if (bookingForm) HTMLFormElement.prototype.submit.call(bookingForm);
-        reserveModal.classList.add('hidden');
-      });
-
-      document.getElementById('cancel-reserve').addEventListener('click', function() {
-        if(reserveModal) reserveModal.classList.add('hidden');
-      });
-  });
-</script>
         </div>
         <nav class="filters" aria-label="Filter tipe mobil">
                 <button class="filter-btn active" data-filter="all" aria-pressed="true">Semua</button>
@@ -297,7 +279,7 @@ $jsonLdProducts = json_encode($cars);
                     </div>
                 </fieldset>
 
-                <button type="submit" class="primary-btn">Reservasi Sekarang</button>
+                <button type="button" id="reserve-btn-trigger" class="primary-btn">Reservasi Sekarang</button>
                 <div id="formSuccess" class="success" role="status" aria-live="polite"></div>
                 <div class="contact-help">
                     <a class="wa-button" href="https://wa.me/6282328649895?text=Halo%20EliteCar%20Indonesia,%20saya%20ingin%20info%20sewa%20mobil." target="_blank" rel="noopener" aria-label="Chat WhatsApp EliteCar Indonesia">
