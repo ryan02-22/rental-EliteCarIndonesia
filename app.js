@@ -9,18 +9,18 @@ const BOOKINGS_ENDPOINT = `${API_BASE_URL}/bookings.php`;
 
 // Fallback data mobil (jika API tidak tersedia)
 const FALLBACK_CARS = [
-  { id: 'c1', name: 'Toyota Fortuner', type: 'SUV', pricePerDay: 850000, image: ['fortuner-1.jpg', 'fortuner-2.jpg', 'fortuner-3.jpg'] },
-  { id: 'c2', name: 'Honda CR-V', type: 'SUV', pricePerDay: 800000, image: ['crv1.webp', 'crv2.webp', 'crv3.webp', 'crv4.webp', 'crv5.webp', 'crv6.jpg'] },
-  { id: 'c3', name: 'Daihatsu Terios', type: 'SUV', pricePerDay: 650000, image: ['terios-2b.webp', 'terios-3c.webp', 'terios-4d.webp', 'terios-5e.webp', 'terios-6e.jpg'] },
-  { id: 'c4', name: 'Hyundai Palisade', type: 'SUV', pricePerDay: 1200000, image: ['palisade1.jpg', 'palisade2.jpg', 'palisade3.jpg', 'palisade4.jpg', 'palisade5.jpg', 'palisade6.jpg', 'palisade7.jpg'] },
-  { id: 'c5', name: 'Toyota Avanza', type: 'Van', pricePerDay: 550000, image: ['avanza1.webp', 'avanza2.webp', 'avanza3.webp', 'avanza4.webp'] },
-  { id: 'c6', name: 'Mitsubishi Xpander', type: 'Van', pricePerDay: 600000, image: ['xpander1.jpg', 'xpander2.jpg', 'xpander3.jpg'] },
-  { id: 'c7', name: 'Suzuki Ertiga', type: 'Van', pricePerDay: 520000, image: 'xpander1.jpg' },
-  { id: 'c8', name: 'Kia Carnival', type: 'Van', pricePerDay: 900000, image: ['carnivalkia-01.jpg', 'carnivalkia-02.jpg', 'carnivalkia-03.jpg', 'carnivalkia-04.jpg'] },
-  { id: 'c9', name: 'Honda City', type: 'Sedan', pricePerDay: 500000, image: ['city1-a.webp', 'city2-b.webp', 'city3-c.webp', 'city4-d.webp', 'city5-e.webp', 'city6-f.jpg'] },
-  { id: 'c10', name: 'Honda Civic', type: 'Sedan', pricePerDay: 750000, image: ['civic1.avif', 'civic2.avif', 'civic3.avif', 'civic4.avif', 'civic5.avif', 'civic6.jpg'] },
-  { id: 'c11', name: 'Toyota Camry', type: 'Sedan', pricePerDay: 900000, image: 'palisade1.jpg' },
-  { id: 'c12', name: 'Mazda 6', type: 'Sedan', pricePerDay: 950000, image: 'palisade2.jpg' }
+  { id: 1, name: 'Toyota Fortuner', type: 'SUV', pricePerDay: 850000, image: ['fortuner-1.jpg', 'fortuner-2.jpg', 'fortuner-3.jpg'] },
+  { id: 2, name: 'Honda CR-V', type: 'SUV', pricePerDay: 800000, image: ['crv1.webp', 'crv2.webp', 'crv3.webp', 'crv4.webp', 'crv5.webp', 'crv6.jpg'] },
+  { id: 3, name: 'Daihatsu Terios', type: 'SUV', pricePerDay: 650000, image: ['terios-2b.webp', 'terios-3c.webp', 'terios-4d.webp', 'terios-5e.webp', 'terios-6e.jpg'] },
+  { id: 4, name: 'Hyundai Palisade', type: 'SUV', pricePerDay: 1200000, image: ['palisade1.jpg', 'palisade2.jpg', 'palisade3.jpg', 'palisade4.jpg', 'palisade5.jpg', 'palisade6.jpg', 'palisade7.jpg'] },
+  { id: 5, name: 'Toyota Avanza', type: 'Van', pricePerDay: 550000, image: ['avanza1.webp', 'avanza2.webp', 'avanza3.webp', 'avanza4.webp'] },
+  { id: 6, name: 'Mitsubishi Xpander', type: 'Van', pricePerDay: 600000, image: ['xpander1.jpg', 'xpander2.jpg', 'xpander3.jpg'] },
+  { id: 7, name: 'Suzuki Ertiga', type: 'Van', pricePerDay: 520000, image: 'xpander1.jpg' },
+  { id: 8, name: 'Kia Carnival', type: 'Van', pricePerDay: 900000, image: ['carnivalkia-01.jpg', 'carnivalkia-02.jpg', 'carnivalkia-03.jpg', 'carnivalkia-04.jpg'] },
+  { id: 9, name: 'Honda City', type: 'Sedan', pricePerDay: 500000, image: ['city1-a.webp', 'city2-b.webp', 'city3-c.webp', 'city4-d.webp', 'city5-e.webp', 'city6-f.jpg'] },
+  { id: 10, name: 'Honda Civic', type: 'Sedan', pricePerDay: 750000, image: ['civic1.avif', 'civic2.avif', 'civic3.avif', 'civic4.avif', 'civic5.avif', 'civic6.jpg'] },
+  { id: 11, name: 'Toyota Camry', type: 'Sedan', pricePerDay: 900000, image: 'palisade1.jpg' },
+  { id: 12, name: 'Mazda 6', type: 'Sedan', pricePerDay: 950000, image: 'palisade2.jpg' }
 ];
 
 

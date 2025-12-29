@@ -88,7 +88,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' || $restored_from_session) {
     // ========================================================================
     // STEP 1: AMBIL DATA DARI FORM
     // ========================================================================
-    $car_id = (int)($_POST['car_id'] ?? 0);  // Cast ke integer untuk keamanan
+    // Ambil data car_id dan bersihkan prefix 'c' jika ada (dari API/frontend)
+    $raw_car_id = $_POST['car_id'] ?? '0';
+    $clean_car_id = preg_replace('/[^0-9]/', '', $raw_car_id);
+    $car_id = (int)($clean_car_id ?: 0);  // Cast ke integer untuk keamanan
     $renter_name = trim($_POST['renter_name'] ?? '');
     $renter_email = trim($_POST['renter_email'] ?? '');
     $start_date = trim($_POST['start_date'] ?? '');
