@@ -363,7 +363,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); padding: 12px; border-radius: 8px; margin-top: 16px; border: 2px solid #4f46e5;">
             <p style="font-size: 13px; color: #ffffff; text-align: center; margin: 0; font-weight: 600;">
-                💻 Karya TI.24.CA.1
+                Karya TI.24.CA.1
             </p>
         </div>
     </div>

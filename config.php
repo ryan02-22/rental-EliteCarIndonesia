@@ -96,6 +96,33 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // ============================================================================
+// BAGIAN 3.5: SECURITY ENHANCEMENTS
+// ============================================================================
+
+// Include security helper functions
+require_once __DIR__ . '/security_helper.php';
+
+// Set security headers for all pages
+setSecurityHeaders();
+
+// Check session timeout (30 minutes)
+if (isLoggedIn() && !checkSessionTimeout(1800)) {
+    session_unset();
+    session_destroy();
+    header('Location: login.php?timeout=1');
+    exit;
+}
+
+// Validate session fingerprint to prevent hijacking
+if (isLoggedIn() && !validateSessionFingerprint()) {
+    session_unset();
+    session_destroy();
+    header('Location: login.php?security=1');
+    exit;
+}
+
+
+// ============================================================================
 // BAGIAN 4: HELPER FUNCTIONS UNTUK AUTHENTICATION
 // ============================================================================
 
